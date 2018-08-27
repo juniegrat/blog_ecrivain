@@ -1,5 +1,6 @@
 <?php if (!empty($_POST) && !empty($_POST['email'])) {
 
+    // Connexion à la bdd
     require_once 'inc/db.php';
 
     require_once 'inc/functions.php';
@@ -22,7 +23,6 @@
 
         mail($_POST['email'], 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/Espace_membre/reset.php?id={$user->id}&token=$reset_token");
 
-
         header('location: login.php');
 
         exit();
@@ -32,10 +32,9 @@
 
         $_SESSION['flash']['danger'] = 'Aucun compte ne correspond à cette adresse mail';
 
-
     }
 }
-require 'inc/header.php' ?>
+require 'inc/header.php'?>
 
 
 <h1>Mot de pass oublié</h1>
@@ -56,4 +55,4 @@ require 'inc/header.php' ?>
 </form>
 
 
-<?php require 'inc/footer.php'; ?>
+<?php require 'inc/footer.php';?>
