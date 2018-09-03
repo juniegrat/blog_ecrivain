@@ -46,7 +46,7 @@ while ($donnees = $req->fetch())
     echo nl2br(htmlspecialchars($donnees->content));
     ?>
     <br />
-    <em><a href="commentaires.php?billet=<?php echo $donnees->id; ?>">Commentaires</a></em>
+    <em><a href="comments.php?billet=<?php echo $donnees->id; ?>">Commentaires</a></em>
     </p>
 </div>
 <?php
