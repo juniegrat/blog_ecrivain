@@ -33,6 +33,22 @@ function logged_only()
 
 }
 
+function admin_only(){
+
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if ($_SESSION['auth']->admin == 0) {
+
+        $_SESSION['flash']['danger'] = "Vous n'avez pas le droit d'accéder à cette page";
+
+        header('location: login.php');
+
+        exit();
+    }
+}
+
 function reconnect_from_cookie()
 {
 
