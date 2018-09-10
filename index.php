@@ -6,7 +6,7 @@ require 'inc/functions.php';
 
 logged_only();
 
-require 'inc/header.php' ?>
+?>
 
 <?php
 
@@ -27,6 +27,10 @@ if(!empty($_POST)){
         $_SESSION['flash']['success'] = "Le billet à bien été posté";
     }
 }
+?>
+<?php
+
+require 'inc/header.php';
 
 // On récupère les 5 derniers billets
 $req = $pdo->query('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news ORDER BY date_creation DESC LIMIT 0, 5');

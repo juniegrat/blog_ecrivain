@@ -12,21 +12,25 @@ require 'inc/header.php' ?>
 
 require_once 'inc/db.php';
 
-if(!empty($_POST)){
+if (!empty($_POST)) {
 
-    if(empty($_POST['comment'])){
+    if (empty($_POST['comment'])) {
         $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
-    }else{
+    } else {
         $req = $pdo->prepare('INSERT INTO comments SET id_news = ?, author = ?, comment = ?, date_comment = NOW()');
 
-        $req->execute([$_GET['billet'],$_SESSION['auth']->username,$_POST['comment']]);
+        $req->execute([$_GET['billet'], $_SESSION['auth']->username, $_POST['comment']]);
 
         $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
+
+
     }
 }
-// On récupère les 5 derniers billets
+// On récupère l'article
 
-$req = $pdo->query('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news ORDER BY date_creation DESC LIMIT 0, 5');
+$req = $pdo->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
+
+$req->execute([$_GET['billet']]);
 
 while ($donnees = $req->fetch()) {
     ?>

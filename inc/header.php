@@ -18,9 +18,14 @@ if (session_status() == PHP_SESSION_NONE) {
 
     <link rel="stylesheet" href="css/app.css">
 
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="editor.js"></script>
+
 </head>
 
 <body>
+
 
 <nav class="navbar navbar-inverse">
     <div class="container">
@@ -33,7 +38,7 @@ if (session_status() == PHP_SESSION_NONE) {
             </button>
         </div>
     </div>
-    <a class="navbar-brand" href="#">Vent d'Alaska</a>
+    <a class="navbar-brand" href="index.php">Vent d'Alaska</a>
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <?php if(isset($_SESSION['auth'])): ?>
