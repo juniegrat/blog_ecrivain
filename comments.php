@@ -6,16 +6,28 @@ require 'inc/functions.php';
 
 logged_only();
 
-require 'inc/header.php' ?>
-
-<?php
-
 require_once 'inc/db.php';
 
 if (!empty($_POST)) {
 
-    if (empty($_POST['comment'])) {
+    if (empty($_POST['comment']) && empty($_POST['commentButton'])) {
+
         $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
+
+    } elseif (!empty($_POST['commentButton'])) {
+
+        $req = $pdo->prepare('SELECT rating_comment FROM comments  WHERE id = ?');
+
+        $req->execute([$_POST['commentId']]);
+
+        $upvote = $req->fetch();
+
+        $req = $pdo->prepare('UPDATE comments SET rating_comment = ?  WHERE id = ?');
+
+        $req->execute([$upvote->rating_comment + 1, $_POST['commentId']]);
+
+        $_SESSION['flash']['success'] = "Le commentaire à bien été upvote";
+
     } else {
         $req = $pdo->prepare('INSERT INTO comments SET id_news = ?, author = ?, comment = ?, date_comment = NOW()');
 
@@ -23,9 +35,9 @@ if (!empty($_POST)) {
 
         $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
 
-
     }
 }
+require 'inc/header.php';
 // On récupère l'article
 
 $req = $pdo->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
@@ -38,16 +50,16 @@ while ($donnees = $req->fetch()) {
 
     <div class="news">
         <h3>
-            <?php echo htmlspecialchars($donnees->title); ?>
-            <em>le <?php echo $donnees->date_creation_fr; ?></em>
+            <?=$donnees->title;?>
+            <em>le <?=$donnees->date_creation_fr;?></em>
         </h3>
 
         <p>
-            <?php
-            // On affiche le contenu du billet
-            echo nl2br(htmlspecialchars($donnees->content));
-            ?>
-            <br/>
+            <?=
+    // On affiche le contenu du billet
+    nl2br($donnees->content);
+    ?>
+        <br/>
         </p>
     </div>
     <?php
@@ -56,26 +68,38 @@ while ($donnees = $req->fetch()) {
 $req->closeCursor();
 
 // Récupération des commentaires
-$req = $pdo->prepare('SELECT author, comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
+$req = $pdo->prepare('SELECT id, author, comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
 $req->execute(array($_GET['billet']));
 
 while ($donnees = $req->fetch()) {
     ?>
-    <p><strong><?php echo htmlspecialchars($donnees->author); ?></strong>
-        le <?php echo $donnees->date_comment_fr; ?></p>
-    <p><?php echo nl2br(htmlspecialchars($donnees->comment)); ?></p>
+    <div class="comment">
+        <div class="comment-heading">
+
+            <form action="" method="POST">
+                    <input type="submit" id=commentButton name="commentButton"  value=&radic;  >
+                    <input type="hidden" id=commentId name="commentId"  value=<?php echo $donnees->id; ?>  >
+            </form>
+
+                <strong>
+                    <?php echo htmlspecialchars($donnees->author); ?>
+                </strong>
+                le <?php echo $donnees->date_comment_fr; ?>
+
+    </div>
+        <?php echo nl2br(htmlspecialchars($donnees->comment)); ?>
+    </div>
     <?php
 } // Fin de la boucle des commentaires
 $req->closeCursor();
 ?>
 
-<h3>Nouveau commentaire</h3>
+<h4>Laissez un commentaire</h4>
 <form action="" method="POST">
     <div class="form-group">
-        <input class="form-control" type="text" name="comment" placeholder="Contenu du commentaire">
+        <textarea class="form-control" name="comment" placeholder="Contenu du commentaire"></textarea>
     </div>
-
     <button class="btn btn-primary">Envoyer</button>
 </form>
 
-<?php require 'inc/footer.php'; ?>
+<?php require 'inc/footer.php';?>
