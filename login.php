@@ -2,12 +2,16 @@
 
 require_once 'inc/functions.php';
 
-
 reconnect_from_cookie();
 
+if (isset($_SESSION['auth'])) {
 
-if(isset($_SESSION['auth'])){
+    if ($_SESSION['auth']->admin == 1) {
+        header('location: administration.php');
 
+        exit();
+
+    }
     header('location: account.php');
 
     exit();
@@ -25,18 +29,17 @@ if (!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])) 
 
     if (password_verify($_POST['password'], $user->password)) {
 
-
         $_SESSION['auth'] = $user;
 
         $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
 
-        if($_POST['remember']){
+        if ($_POST['remember']) {
 
             $remember_token = str_random(250);
 
             $pdo->prepare('UPDATE users SET remember_token = ? WHERE id = ?')->execute([$remember_token, $user->id]);
 
-            setcookie('remember',$user->id . '==' . $remember_token . sha1($user->id . 'boi'), time() + 60 * 60 * 24 * 7);
+            setcookie('remember', $user->id . '==' . $remember_token . sha1($user->id . 'boi'), time() + 60 * 60 * 24 * 7);
 
         }
 
@@ -44,13 +47,11 @@ if (!empty($_POST) && !empty($_POST['username']) && !empty($_POST['password'])) 
 
         exit();
 
-
     } else {
         $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
     }
 }
-require 'inc/header.php' ?>
-
+require 'inc/header.php';?>
 
 <h1>Se connecter</h1>
 
@@ -87,4 +88,4 @@ require 'inc/header.php' ?>
 </form>
 
 
-<?php require 'inc/footer.php'; ?>
+<?php require 'inc/footer.php';?>
