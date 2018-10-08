@@ -4,32 +4,32 @@ session_start();
 
 require 'inc/functions.php';
 
-logged_only();
+admin_only();
 
+require_once 'inc/db.php';
 
 if (!empty($_POST)) {
-    print_r($_POST);
-
-    if (empty($_POST['comment'])) {
-        $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
+    if (empty($_POST['title'])) {
+        $_SESSION['flash']['danger'] = "Veuillez entrer un titre";
+    } elseif (empty($_POST['content'])) {
+        $_SESSION['flash']['danger'] = "Veuillez entrer du contenu";
     } else {
-        $req = $pdo->prepare('INSERT INTO comments SET id_news = ?, author = ?, comment = ?, date_comment = NOW()');
+        $req = $pdo->prepare('UPDATE news SET title = ?, content = ? WHERE id = ?');
 
-        $req->execute([$_GET['billet'], $_SESSION['auth']->username, $_POST['comment']]);
+        $req->execute([$_POST['title'], $_POST['content'], $_GET['billet']]);
 
-        $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
+        $_SESSION['flash']['success'] = "L'article à bien été modifié";
 
     }
 }
 
-require_once 'inc/db.php';
 // On récupère l'article
 
 $req = $pdo->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
 
 $req->execute([$_GET['billet']]);
 
-require 'inc/header.php' ;
+require 'inc/header.php';
 
 while ($donnees = $req->fetch()) {
     ?>
@@ -41,51 +41,44 @@ while ($donnees = $req->fetch()) {
             <em>le <?php echo $donnees->date_creation_fr; ?></em>
         </h3>
 
-        <p>
-            <?php
-            // On affiche le contenu du billet
-            echo nl2br(htmlspecialchars($donnees->content));
-            ?>
+        <div>
+            <?php echo nl2br($donnees->content); ?>
             <br/>
-        </p>
+            </div>
     </div>
     <?php
-
 } // Fin de la boucle des billets
 $req->closeCursor();
 
 // Récupération des commentaires
-$req = $pdo->prepare('SELECT author, comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
+$req = $pdo->prepare('SELECT author, comment, id, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY rating_comment DESC');
 $req->execute(array($_GET['billet']));
 
 while ($donnees = $req->fetch()) {
     ?>
-    <p><strong><?php echo htmlspecialchars($donnees->author); ?></strong>
-        le <?php echo $donnees->date_comment_fr; ?></p>
-    <p><?php echo nl2br(htmlspecialchars($donnees->comment)); ?></p>
+    <div class="comment">
+            <p>
+                    <a
+                    href="delete.php?billet=<?=$donnees->id;?>&category=comments">&times;
+                    </a>
+        <strong>
+            <?=htmlspecialchars($donnees->author);?>
+        </strong>
+        le <?=$donnees->date_comment_fr;?>
+    </p>
+    <?=nl2br(htmlspecialchars($donnees->comment));?>
+    </div>
     <?php
 } // Fin de la boucle des commentaires
 $req->closeCursor();
 ?>
 
-<h3>Modifier le commentaire</h3>
-<input id="button_bold" type="button" value="G" style="font-weight: bold;" onclick="commande('bold');" />
-<input  id="button_italic" type="button" value="I" style="font-style: italic;" onclick="commande('italic');" />
-<input  id="button_underline" type="button" value="S" style="text-decoration: underline;" onclick="commande('underline');" />
-<input  id="button_createLink" type="button" value="Lien" onclick="commande('createLink');" >
-<input  id="button_insertImage" type="button" value="Image" onclick="commande('insertImage');" >
-<select onchange="commande('heading', this.value); this.selectedIndex = 0;">
-    <option value="">Titre</option>
-    <option value="h1">Titre 1</option>
-    <option value="h2">Titre 2</option>
-    <option value="h3">Titre 3</option>
-    <option value="h4">Titre 4</option>
-    <option value="h5">Titre 5</option>
-    <option value="h6">Titre 6</option>
-</select>
 <form action="" method="POST">
-<div id="editeur" contenteditable = true name="content">
-</div>
+    <div class="editor">
+<input id="newsTitle" type="text" name="title" placeholder="Entrez un titre" > </div>
+<textarea class="mytextarea-body" name="content" placeholder="Entrez du contenu" > </textarea>
+    <br>
     <button class="btn btn-primary">Modifier</button>
 </form>
-<?php require 'inc/footer.php'; ?>
+</div>
+<?php require 'inc/footer.php';?>
