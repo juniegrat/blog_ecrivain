@@ -10,7 +10,6 @@ if (!empty($_POST)) {
 
     require_once 'inc/db.php';
 
-
     if (empty($_POST['username']) || !preg_match('/^[a-zA-Z0-9_]+$/', $_POST['username'])) {
 
         $errors['username'] = "Votre pseudo n'est pas valide (alphanumérique)";
@@ -50,7 +49,7 @@ if (!empty($_POST)) {
 
         $user_id = $pdo->lastInsertId();
 
-        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien: \n\nhttp://localhost:8888/Espace_membre/confirm.php?id=$user_id&token=$token");
+        mail($_POST['email'], 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/confirm.php?id=$user_id&token=$token");
 
         $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour valider votre compte";
 
@@ -61,7 +60,7 @@ if (!empty($_POST)) {
 
 }
 ?>
-<?php require 'inc/header.php'; ?>
+<?php require 'inc/header.php';?>
 
 
 <h1>S'inscrire</h1>
@@ -75,13 +74,13 @@ if (!empty($_POST)) {
         <ul>
 
             <?php foreach ($errors as $error): ?>
-                <li><?= $error; ?></li>
-            <?php endforeach; ?>
+                <li><?=$error;?></li>
+            <?php endforeach;?>
         </ul>
 
     </div>
 
-<?php endif; ?>
+<?php endif;?>
 
 <form action="" method="POST">
 
@@ -121,4 +120,4 @@ if (!empty($_POST)) {
 
 </form>
 
-<?php require 'inc/footer.php'; ?>
+<?php require 'inc/footer.php';?>

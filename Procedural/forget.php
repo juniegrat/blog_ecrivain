@@ -21,7 +21,7 @@
 
         $_SESSION['flash']['success'] = "Les instructions du rappel de mot de passe vous ont été envoyés par email";
 
-        mail($_POST['email'], 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/Espace_membre/reset.php?id={$user->id}&token=$reset_token");
+        mail($_POST['email'], 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/reset.php?id={$user->id}&token=$reset_token");
 
         header('location: login.php');
 
@@ -50,7 +50,7 @@ require 'inc/header.php'?>
     </div>
 
 
-    <button type="submit" class="btn btn-primary">Se connecter</button>
+    <button type="submit" class="btn btn-primary">Envoyer</button>
 
 </form>
 
