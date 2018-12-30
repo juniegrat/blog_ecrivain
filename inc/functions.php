@@ -26,11 +26,28 @@ function logged_only()
 
         $_SESSION['flash']['danger'] = "Vous n'avez pas le droit d'accéder à cette page";
 
-        header('location: login.php');
+        header('location: index.php');
 
         exit();
     }
 
+}
+
+function admin_only()
+{
+
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    if ($_SESSION['auth']->admin == 0) {
+
+        $_SESSION['flash']['danger'] = "Vous n'avez pas le droit d'accéder à cette page";
+
+        header('location: index.php');
+
+        exit();
+    }
 }
 
 function reconnect_from_cookie()
@@ -45,7 +62,7 @@ function reconnect_from_cookie()
 
         require_once 'db.php';
 
-        if(!isset($pdo)){
+        if (!isset($pdo)) {
 
             global $pdo;
 
@@ -73,15 +90,14 @@ function reconnect_from_cookie()
 
                 $_SESSION['auth'] = $user;
 
-                setcookie('remember',$remember_token,  time() + 60 * 60 * 24 * 7);
+                setcookie('remember', $remember_token, time() + 60 * 60 * 24 * 7);
 
-                 unset($_SESSION['flash']);
+                unset($_SESSION['flash']);
 
-                header('location: account.php');
+                header('location: index.php?action=account');
 
-
-            }else{
-                setcookie('remember',null, -1);
+            } else {
+                setcookie('remember', null, -1);
             }
 
         }

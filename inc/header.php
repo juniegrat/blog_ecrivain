@@ -16,11 +16,17 @@ if (session_status() == PHP_SESSION_NONE) {
 
     <title>Vent d'alska</title>
 
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="./public/css/app.css">
+
+    <link rel="stylesheet" href="./public/css/main.css">
+
+   <script src='https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=t5niqycm0fdijcdvb49k04fbkn79lw4x2anllbhx83d4vz2n'></script>
+  <script src="./public/js/tinymce.js" type="text/javascript"></script>
 
 </head>
 
 <body>
+
 
 <nav class="navbar navbar-inverse">
     <div class="container">
@@ -33,16 +39,16 @@ if (session_status() == PHP_SESSION_NONE) {
             </button>
         </div>
     </div>
-    <a class="navbar-brand" href="#">Vent d'Alaska</a>
+    <a class="navbar-brand" href="index.php?action=listPosts">Vent d'Alaska</a>
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <?php if(isset($_SESSION['auth'])): ?>
-            <li><a href="logout.php">Se déconnecter</a></li>
+            <?php if (isset($_SESSION['auth'])): ?>
+            <li><a href="index.php?action=logout">Se déconnecter</a></li>
 
             <?php else: ?>
-            <li><a href="register.php">S'inscrire</a></li>
-            <li><a href="login.php">Se connecter</a></li>
-            <?php endif; ?>
+            <li><a href="index.php?action=register">S'inscrire</a></li>
+            <li><a href="index.php?action=loggin">Se connecter</a></li>
+            <?php endif;?>
         </ul>
     </div>
 </nav>
@@ -53,16 +59,16 @@ if (session_status() == PHP_SESSION_NONE) {
 
         <?php foreach ($_SESSION['flash'] as $type => $message): ?>
 
-            <div class="alert alert-<?= $type; ?>">
+            <div class="alert alert-<?=$type;?>">
 
-                <?= $message; ?>
+                <?=$message;?>
 
             </div>
 
-        <?php endforeach; ?>
+        <?php endforeach;?>
 
-    <?php unset($_SESSION['flash']); ?>
+    <?php unset($_SESSION['flash']);?>
 
-    <?php endif; ?>
+    <?php endif;?>
 
 

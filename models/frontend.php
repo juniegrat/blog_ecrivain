@@ -1,0 +1,429 @@
+<?php
+{
+    require_once 'inc/functions.php';
+
+    $_bdd;
+
+    function setBdd()
+    {
+        $_bdd = new PDO('mysql:dbname=test;host=localhost', 'root', 'root');
+        $_bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $_bdd->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
+
+        return $_bdd;
+    }
+
+    /* function getBdd()
+    {
+    if ($_bdd == null) {
+    setBdd();
+    }
+
+    return $_bdd;
+    } */
+
+    function getPosts()
+    {
+        $_bdd = setBdd();
+
+        $posts = $_bdd->query('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news ORDER BY date_creation DESC LIMIT 0, 5');
+
+        return $posts;
+    }
+
+    function getPost($postId)
+    {
+
+        $_bdd = setBdd();
+
+        $post = $_bdd->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
+
+        $post->execute([$postId]);
+
+        return $post;
+    }
+
+    function getComments($postId)
+    {
+
+        $_bdd = setBdd();
+
+        $comments = $_bdd->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
+
+        $comments->execute([$postId]);
+
+        return $comments;
+    }
+
+    function postComment($postId, $author, $comment)
+    {
+        $_bdd = setBdd();
+
+        $comments = $_bdd->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
+        $affectedLines = $comments->execute(array(
+            "id_news" => $postId,
+            "author" => $author,
+            "comment" => $comment,
+        ));
+
+        return $affectedLines;
+    }
+
+    function rateComment($commentId, $postId)
+    {
+        $_bdd = setBdd();
+
+        $Upcomment = $_bdd->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
+
+        $affectedLines = $Upcomment->execute([$commentId]);
+
+        session_start();
+
+        $_SESSION['flash']['success'] = "Le commentaire à bien été upvote";
+
+        header('location: index.php?action=post&id=' . $postId);
+
+        return $affectedLines;
+
+    }
+
+    function deleteComment($commId, $postId)
+    {
+        $_bdd = setBdd();
+
+        $req = $_bdd->prepare('DELETE FROM comments WHERE id = ?');
+
+        $req->execute([$commId]);
+
+        session_start();
+
+        $_SESSION['flash']['success'] = "Le commentaire à bien été supprimé";
+
+        header('location: index.php?action=edit&id=' . $postId);
+
+        exit();
+    }
+
+    function deletePost($postId)
+    {
+
+        $_bdd = setBdd();
+
+        $req = $_bdd->prepare('DELETE FROM news WHERE id = ?');
+
+        $req->execute(array($postId));
+
+        session_start();
+
+        $_SESSION['flash']['success'] = "L'article à bien été supprimé";
+
+        header('location: index.php?action=admin');
+    }
+
+    function addPost($postTitle, $postContent)
+    {
+        $_bdd = setBdd();
+
+        $req = $_bdd->prepare('INSERT INTO news SET title = :title, content = :content, date_creation = NOW()');
+
+        $req->execute(array(
+            "title" => $postTitle,
+            "content" => $postContent,
+        ));
+
+        session_start();
+
+        $_SESSION['flash']['success'] = "L'article à bien été publié";
+
+        header('location: index.php?action=admin');
+    }
+    function editPost($title, $content, $postId)
+    {
+        $_bdd = setBdd();
+
+        session_start();
+
+        if (empty($title)) {
+            $_SESSION['flash']['danger'] = "Veuillez entrer un titre";
+        } elseif (empty($content)) {
+            $_SESSION['flash']['danger'] = "Veuillez entrer du contenu";
+        } else {
+            $req = $_bdd->prepare('UPDATE news SET title = ?, content = ? WHERE id = ?');
+
+            $req->execute([$title, $content, $postId]);
+
+            $_SESSION['flash']['success'] = "L'article à bien été modifié";
+
+        }
+
+        header('location: index.php?action=edit&id=' . $postId);
+    }
+
+    function login($login, $password, $remember)
+    {
+
+        $_bdd = setBdd();
+
+        $req = $_bdd->prepare('SELECT * FROM users WHERE username = :username OR email = :username AND confirmed_at IS NOT NULL');
+
+        $req->execute(['username' => $login]);
+
+        $user = $req->fetch();
+
+        session_start();
+
+        if (password_verify($password, $user->password)) {
+
+            $_SESSION['auth'] = $user;
+
+            $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
+
+            if ($remember) {
+
+                $remember_token = str_random(250);
+
+                $_bdd->prepare('UPDATE users SET remember_token = ? WHERE id = ?')->execute([$remember_token, $user->id]);
+
+                setcookie('remember', $user->id . '==' . $remember_token . sha1($user->id . 'boi'), time() + 60 * 60 * 24 * 7);
+
+            }
+
+            header('location: index.php?action=account');
+
+            exit();
+
+        } else {
+            $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
+
+            header('location: index.php?action=loggin');
+
+            exit();
+        }
+    }
+    function logout()
+    {
+        session_start();
+
+        setcookie('remember', null, -1);
+
+        unset($_SESSION['auth']);
+
+        $_SESSION['flash']['success'] = "Vous êtes maintenant déconnecté";
+
+        header('location: index.php?action=loggin');
+
+    }
+
+    function forget($mail)
+    {
+
+        $_bdd = setBdd();
+
+        $req = $_bdd->prepare('SELECT * FROM users WHERE email = ? AND confirmed_at IS NOT NULL');
+
+        $req->execute([$mail]);
+
+        $user = $req->fetch();
+
+        if ($user) {
+
+            session_start();
+
+            $reset_token = str_random(60);
+
+            $_bdd->prepare('UPDATE users SET reset_token = ?, reset_at = NOW() WHERE id = ?')->execute([$reset_token, $user->id]);
+
+            $_SESSION['flash']['success'] = "Les instructions du rappel de mot de passe vous ont été envoyés par email";
+
+            mail($mail, 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=reset&id={$user->id}&token=$reset_token");
+
+            header('location: index.php?action=forget');
+
+            exit();
+
+        } else {
+            session_start();
+
+            $_SESSION['flash']['danger'] = 'Aucun compte ne correspond à cette adresse mail';
+
+        }
+    }
+
+    function register($username, $mail, $password, $passwordConfirm)
+    {
+
+        $_bdd = setBdd();
+
+        $errors = [];
+
+        if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+
+            $errors['username'] = "Votre pseudo n'est pas valide (alphanumérique)";
+        } else {
+            $req = $_bdd->prepare('SELECT id FROM users WHERE username = ?');
+            $req->execute([$username]);
+            $user = $req->fetch();
+            if ($user) {
+                $errors['username'] = 'Ce pseudo est déjà pris';
+            }
+        }
+
+        if (empty($mail) || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = "Votre email n'est pas valide";
+        } else {
+            $req = $_bdd->prepare('SELECT id FROM users WHERE email = ?');
+            $req->execute([$mail]);
+            $user = $req->fetch();
+            if ($user) {
+                $errors['email'] = 'Cet email est déjà utilisé pour un autre compte';
+            }
+        }
+
+        if (empty($password) || $password != $passwordConfirm) {
+            $errors['password'] = "Vous devez rentrer un mot de passe valide";
+        }
+
+        if (empty($errors)) {
+
+            $req = $_bdd->prepare("INSERT INTO users SET username = ?, password = ?, email = ?, confirmation_token = ?");
+
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+            $token = str_random(60);
+
+            $req->execute([$username, $hashedPassword, $mail, $token]);
+
+            $userId = $_bdd->lastInsertId();
+
+            mail($mail, 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=confirm&id=$userId&token=$token");
+
+            session_start();
+
+            $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour valider votre compte";
+
+            header('Location: index.php?action=loggin');
+
+            exit();
+        } else {
+
+            session_start();
+
+            $_SESSION['errors'] = $errors;
+
+            header('Location: index.php?action=register');
+        }
+
+    }
+
+    function confirmUser($userId, $token)
+    {
+        $_bdd = setBdd();
+
+        $req = $_bdd->prepare('SELECT * FROM users WHERE id = ?');
+
+        $req->execute([$userId]);
+
+        $user = $req->fetch();
+
+        session_start();
+
+        if ($user && $user->confirmation_token == $token) {
+
+            $req = $_bdd->prepare('UPDATE users SET confirmation_token = NULL, confirmed_at = NOW() WHERE id = ?')->execute([$userId]);
+
+            $_SESSION['flash']['success'] = "Votre compte à bien été validé";
+
+            $_SESSION['auth'] = $user;
+
+            header('location: index.php?action=account');
+
+        } else {
+            $_SESSION['flash']['danger'] = "Ce token n'est plus valide";
+
+            header('location: index.php?action=register');
+        }
+    }
+
+    function resetPassword($id, $token, $password, $passwordConfirm)
+    {
+
+        $_bdd = setBdd();
+
+        if (isset($id) && isset($token)) {
+
+            $req = $_bdd->prepare('SELECT * FROM users WHERE id = ? AND reset_token IS NOT NULL AND reset_token = ? AND reset_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)');
+
+            $req->execute([$id, $token]);
+
+            $user = $req->fetch();
+
+            if ($user) {
+
+                if (!empty($password && $passwordConfirm)) {
+                    if (!empty($password) && $password == $passwordConfirm) {
+
+                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
+                        $_bdd->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL')->execute([$hashedPassword]);
+
+                        session_start();
+
+                        $_SESSION['flash']['success'] = "Votre mot de passe à bien été modifié";
+
+                        $_SESSION['auth'] = $user;
+
+                        header('location: index.php?action=account');
+
+                        exit();
+
+                    }
+                } else {
+
+                    session_start();
+
+                    $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
+
+                    header('location: index.php?action=reset&id=' . $id . '&token=' . $token);
+
+                    exit();
+                }
+            }
+        } else {
+
+            session_start();
+
+            $_SESSION['flash']['danger'] = "Ce token n'est pas valide";
+
+            header('location: index.php?action=loggin');
+
+            exit();
+        }
+
+    }
+
+    function changePassword($password, $passwordConfirm)
+    {
+
+        $_bdd = setBdd();
+
+        session_start();
+
+        if (!empty($password) && $password != $passwordConfirm) {
+            $_SESSION['flash']['danger'] = "Les mots de passes ne correspondent pas";
+        } else {
+
+            $userId = $_SESSION['auth']->id;
+
+            $hashedpassword = password_hash($password, PASSWORD_BCRYPT);
+
+            $_bdd->prepare('UPDATE users SET password = ?')->execute([$hashedpassword]);
+
+            $_SESSION['flash']['success'] = "Votre mot de passe à bien été mis à jour";
+
+        }
+        header('location: index.php?action=account');
+
+        exit();
+    }
+
+}
