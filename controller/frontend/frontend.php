@@ -75,3 +75,10 @@ function _reset($id, $token)
     require './views/frontend/resetView.php';
 
 }
+
+function _error()
+{
+
+    require './views/frontend/errorView.php';
+
+}

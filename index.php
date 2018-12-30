@@ -70,6 +70,8 @@ if (isset($_GET['action'])) {
         register($_POST['username'], $_POST['email'], $_POST['password'], $_POST['password_confirm']);
     } elseif ($_GET['action'] == 'confirm') {
         confirmUser($_GET['id'], $_GET['token']);
+    } elseif ($_GET['action'] == 'error') {
+        _error();
     }
 } else {
     _listPosts();
