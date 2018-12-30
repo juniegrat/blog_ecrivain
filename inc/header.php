@@ -16,42 +16,12 @@ if (session_status() == PHP_SESSION_NONE) {
 
     <title>Vent d'alska</title>
 
-    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="./public/css/app.css">
 
-    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="./public/css/main.css">
 
    <script src='https://cloud.tinymce.com/stable/tinymce.min.js?apiKey=t5niqycm0fdijcdvb49k04fbkn79lw4x2anllbhx83d4vz2n'></script>
-  <script type="text/javascript">
-        tinymce.PluginManager.add('placeholder', function (editor) {
-            editor.on('init', function () {
-                var label = new Label;
-                onBlur();
-                tinymce.DOM.bind(label.el, 'click', onFocus);
-                editor.on('focus', onFocus);
-                editor.on('blur', onBlur);
-                editor.on('change', onBlur);
-                editor.on('setContent', onBlur);
-                function onFocus() { if (!editor.settings.readonly === true) { label.hide(); } editor.execCommand('mceFocus', false); }
-                function onBlur() { if (editor.getContent() == '') { label.show(); } else { label.hide(); } }
-            });
-            var Label = function () {
-                var placeholder_text = editor.getElement().getAttribute("placeholder") || editor.settings.placeholder;
-                var placeholder_attrs = editor.settings.placeholder_attrs || { style: { position: 'absolute', top: '2px', left: 0, color: '#aaaaaa', padding: '.25%', margin: '5px', width: '80%', 'font-size': '17px !important;', overflow: 'hidden', 'white-space': 'pre-wrap' } };
-                var contentAreaContainer = editor.getContentAreaContainer();
-                tinymce.DOM.setStyle(contentAreaContainer, 'position', 'relative');
-                this.el = tinymce.DOM.add(contentAreaContainer, "label", placeholder_attrs, placeholder_text);
-            }
-            Label.prototype.hide = function () { tinymce.DOM.setStyle(this.el, 'display', 'none'); }
-            Label.prototype.show = function () { tinymce.DOM.setStyle(this.el, 'display', ''); }
-    });
-
-  tinymce.init({
-    selector: '.mytextarea-body',
-    statusbar: false,
-    plugins: ['placeholder'],
-
-  });
-  </script>
+  <script src="./public/js/tinymce.js" type="text/javascript"></script>
 
 </head>
 
@@ -69,15 +39,15 @@ if (session_status() == PHP_SESSION_NONE) {
             </button>
         </div>
     </div>
-    <a class="navbar-brand" href="index.php">Vent d'Alaska</a>
+    <a class="navbar-brand" href="index.php?action=listPosts">Vent d'Alaska</a>
     <div id="navbar" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <?php if (isset($_SESSION['auth'])): ?>
-            <li><a href="logout.php">Se déconnecter</a></li>
+            <li><a href="index.php?action=logout">Se déconnecter</a></li>
 
             <?php else: ?>
-            <li><a href="register.php">S'inscrire</a></li>
-            <li><a href="login.php">Se connecter</a></li>
+            <li><a href="index.php?action=register">S'inscrire</a></li>
+            <li><a href="index.php?action=loggin">Se connecter</a></li>
             <?php endif;?>
         </ul>
     </div>
