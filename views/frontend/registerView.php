@@ -1,8 +1,8 @@
 <?php
 
-require_once 'inc/functions.php';
+/* require_once 'inc/functions.php'; */
 
-session_start();
+/* session_start(); */
 
 var_dump($_SESSION);
 

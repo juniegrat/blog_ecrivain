@@ -3,7 +3,7 @@
 <?php ob_start();?>
 <?php
 
-session_start();
+/* session_start(); */
 
 /* require 'inc/functions.php'; */
 
