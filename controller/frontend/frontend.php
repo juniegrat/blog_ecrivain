@@ -1,6 +1,7 @@
 <?php
 require './models/frontend.php';
 
+/* require './inc/functions.php'; */
 function _listPosts()
 {
     $posts = getPosts();
