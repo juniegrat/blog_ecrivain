@@ -1,6 +1,63 @@
 <?php
 require './controller/frontend/frontend.php';
 
+/* switch ($_GET['action']) {
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+case "listPosts":
+_listPosts();
+break;
+} */
+
 if (isset($_GET['action'])) {
     if ($_GET['action'] == 'listPosts') {
         _listPosts();
@@ -15,7 +72,9 @@ if (isset($_GET['action'])) {
             if (!empty($_POST['comment'])) {
                 _addComment($_GET['id'], $_POST['author'], $_POST['comment']);
             } else {
+                session_start();
                 $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
+                _post();
             }
         } else {
             echo 'Erreur : aucun identifiant de billet envoyé';
@@ -55,7 +114,7 @@ if (isset($_GET['action'])) {
     } elseif ($_GET['action'] == 'forget') {
         _forget();
     } elseif ($_GET['action'] == 'reset') {
-        _reset($_GET['id'], $_GET['token']);
+        _reset();
     } elseif ($_GET['action'] == 'resetPassword') {
         resetPassword($_GET['id'], $_GET['token'], $_POST['password'], $_POST['password_confirm']);
     } elseif ($_GET['action'] == 'mail') {
