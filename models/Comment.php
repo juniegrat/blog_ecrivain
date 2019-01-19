@@ -2,12 +2,12 @@
 class Comment
 {
 
-    private $_id;
-    private $_idNews;
-    private $_author;
-    private $_comment;
-    private $_dateComment;
-    private $_ratingComment;
+    protected $_id,
+    $_idNews,
+    $_author,
+    $_comment,
+    $_dateComment,
+        $_ratingComment;
 
     public function __construct(array $data)
     {
@@ -16,23 +16,12 @@ class Comment
 
     public function hydrate(array $data)
     {
-        if (isset($data["id"])) {
-            $this->setId($data["id"]);
-        }
-        if (isset($data["id_news"])) {
-            $this->setIdNews($data["id_news"]);
-        }
-        if (isset($data["author"])) {
-            $this->setAuthor($data["author"]);
-        }
-        if (isset($data["comment"])) {
-            $this->setComment($data["comment"]);
-        }
-        if (isset($data["date_comment"])) {
-            $this->setDateComment($data["date_comment"]);
-        }
-        if (isset($data["rating_comment"])) {
-            $this->setRatingComment($data["rating_comment"]);
+        foreach ($data as $attr => $value) {
+            $method = 'set' . ucfirst($attr);
+
+            if (is_callable([$this, $method])) {
+                $this->$method($value);
+            }
         }
     }
 

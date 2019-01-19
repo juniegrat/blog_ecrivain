@@ -2,10 +2,10 @@
 class Post
 {
 
-    private $_id;
-    private $_title;
-    private $_content;
-    private $_dateCreation;
+    protected $_id,
+    $_title,
+    $_content,
+        $_dateCreation;
 
     public function __construct(array $data)
     {
@@ -14,17 +14,12 @@ class Post
 
     public function hydrate(array $data)
     {
-        if (isset($data["id"])) {
-            $this->setId($data["id"]);
-        }
-        if (isset($data["title"])) {
-            $this->setTitle($data["title"]);
-        }
-        if (isset($data["content"])) {
-            $this->setContent($data["content"]);
-        }
-        if (isset($data["date_creation"])) {
-            $this->setDateCreation($data["date_creation"]);
+        foreach ($data as $attr => $value) {
+            $method = 'set' . ucfirst($attr);
+
+            if (is_callable([$this, $method])) {
+                $this->$method($value);
+            }
         }
     }
 
