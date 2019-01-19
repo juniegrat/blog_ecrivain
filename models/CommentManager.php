@@ -14,7 +14,6 @@ class CommentManager
         $this->_db = $pdo;
     }
 
-    
     public function add(Comment $comment)
     {
         $req = $this->_db->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
@@ -25,4 +24,52 @@ class CommentManager
             "comment" => $comment->comment(),
         ));
     }
+}
+function comments(Comment $comment)
+{
+
+    $_bdd = setBdd();
+
+    $comments = $_bdd->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
+
+    $comments->execute([$postId]);
+
+    return $comments;
+}
+
+function comment(Comment $comment)
+{
+    $_bdd = setBdd();
+
+    $req = $_bdd->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
+    $affectedLines = $req->execute(array(
+        "id_news" => $comment->id(),
+        "author" => $comment->author(),
+        "comment" => $comment->comment(),
+    ));
+
+    return $affectedLines;
+}
+
+function rate(Comment $comment)
+{
+    $_bdd = setBdd();
+
+    $Upcomment = $_bdd->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
+
+    $affectedLines = $Upcomment->execute([$comment->id()]);
+
+    return $affectedLines;
+
+}
+
+function delete(Comment $comment)
+{
+    $_bdd = setBdd();
+
+    $req = $_bdd->prepare('DELETE FROM comments WHERE id = ?');
+
+    $affectedLines = $req->execute([$comment->id()]);
+
+    return $affectedLines;
 }
