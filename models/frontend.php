@@ -209,6 +209,8 @@
 
             mail($mail, 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=reset&id={$user->id}&token=$reset_token");
 
+        } elseif (empty($mail) || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+            $affectedLines = "invalidEmail";
         } else {
 
             $affectedLines = "unknownEmail";
@@ -321,7 +323,7 @@
 
                         $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-                        $affectedLines = $_bdd->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL')->execute([$hashedPassword]);
+                        $affectedLines = $_bdd->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $id]);
 
                     }
                 } else {
