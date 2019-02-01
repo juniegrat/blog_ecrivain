@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.7
+-- version 4.8.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:8889
--- Generation Time: Jan 11, 2019 at 03:00 PM
--- Server version: 5.6.38
--- PHP Version: 7.2.1
+-- Generation Time: Feb 01, 2019 at 01:34 PM
+-- Server version: 5.7.23
+-- PHP Version: 7.2.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -73,7 +73,9 @@ INSERT INTO `comments` (`id`, `id_news`, `author`, `comment`, `date_comment`, `r
 (66, 25, 'junight', 'hh', '2018-12-31 15:33:23', 1),
 (67, 22, 'junight', 'jjjj', '2018-12-31 15:34:31', 1),
 (68, 22, 'junight', 'hh', '2018-12-31 15:34:35', 0),
-(69, 25, 'junight', 'Halo', '2019-01-11 14:44:48', 1);
+(69, 25, 'junight', 'Halo', '2019-01-11 14:44:48', 1),
+(70, 26, 'junight', 'gklghlgjhlghl', '2019-01-24 14:22:01', 1),
+(71, 27, 'junight', 'cv k,fvkldf,', '2019-01-24 21:13:24', 1);
 
 -- --------------------------------------------------------
 
@@ -96,8 +98,8 @@ INSERT INTO `news` (`id`, `title`, `content`, `date_creation`) VALUES
 (20, 'TECHNO MAGIQUE w/ Emmanuel & Introversion', '<p>vb vb vb vdbgvnvxbnvbcnb bn vbc cb&nbsp;</p>', '2018-12-27 17:37:11'),
 (22, 'Anceztral w/ Rey & Kjavik, Jugurtha / 002', '<p>hlkmhhmml</p>', '2018-12-27 18:02:52'),
 (23, 'Anceztral w/ Rey & Kjavik, Jugurtha / 002', '<p>bonjour</p>', '2018-12-28 18:45:25'),
-(24, 'Quartiers Rouges .06 : Fusion mes couilles (L\'anniversaire)', '<p>kdfhvlmsdfbhvmldkbhjsvmsld</p>', '2018-12-29 20:29:46'),
-(25, 'lkjlkjjlk', '<p>ojlkjljlkj</p>', '2018-12-29 20:44:46');
+(26, 'Quartiers Rouges .06 : Fusion mes couilles (L\'anniversaire)', '<p>lerogjistrhjerohipjdt&agrave;&ccedil;^yjdrhghiojsedio</p>', '2019-01-24 14:21:51'),
+(27, 'Anceztral w/ Rey & Kjavik, Jugurtha / 002', '<p>jjj</p>', '2019-01-24 21:13:07');
 
 -- --------------------------------------------------------
 
@@ -107,14 +109,14 @@ INSERT INTO `news` (`id`, `title`, `content`, `date_creation`) VALUES
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `username` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `admin` tinyint(1) NOT NULL,
-  `remember_token` varchar(255) NOT NULL,
-  `confirmation_token` varchar(255) NOT NULL,
+  `username` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `password` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `admin` tinyint(1) DEFAULT NULL,
+  `remember_token` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
+  `confirmation_token` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `confirmed_at` datetime DEFAULT NULL,
-  `reset_token` varchar(255) NOT NULL,
+  `reset_token` varchar(255) CHARACTER SET utf8 DEFAULT NULL,
   `reset_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -123,7 +125,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password`, `admin`, `remember_token`, `confirmation_token`, `confirmed_at`, `reset_token`, `reset_at`) VALUES
-(23, 'junight', 'juniegrat@gmail.com', '$2y$10$LHJ6DkL3R0IIaFwMlbP6MuzXfnFm0wVtlIkDQMbuAlHzrOznaVcrS', 1, '2iKf0OhnaBS5YieDJYM25aI8ZaNgtvsue6PXx3fQBv53oOSF5EXLQhPUQqP555UodWZDgogsawYIIxCenqoihA81XULA5wR6OYWHQ6IqwWbkTU5nyru9osLfKZzLQcoxF0Nq8QHAfCTHfFWOe17ilfu4to5RVwvSHY6wm0oqAkR9Z7aXiJ517x6TSzPkmAo74l1to06mllsb9RSChlEYAUccyWHUSpTw5kmp7WJZ0FAwLFLZcoA4L6Kcum', '', '2018-12-29 20:15:05', '', NULL);
+(23, 'junight', 'juniegrat@gmail.com', '$2y$10$LHJ6DkL3R0IIaFwMlbP6MuzXfnFm0wVtlIkDQMbuAlHzrOznaVcrS', 1, '2iKf0OhnaBS5YieDJYM25aI8ZaNgtvsue6PXx3fQBv53oOSF5EXLQhPUQqP555UodWZDgogsawYIIxCenqoihA81XULA5wR6OYWHQ6IqwWbkTU5nyru9osLfKZzLQcoxF0Nq8QHAfCTHfFWOe17ilfu4to5RVwvSHY6wm0oqAkR9Z7aXiJ517x6TSzPkmAo74l1to06mllsb9RSChlEYAUccyWHUSpTw5kmp7WJZ0FAwLFLZcoA4L6Kcum', '', '2018-12-29 20:15:05', '', NULL),
+(24, 'simax75', 'gsg.digit@gmail.com', '$2y$10$gx9npVIZKgqB7OQ.ezus5.o/iGyXxmgWnnGqDSpR.J4nAsx4NFddO', NULL, NULL, '0U9s2sI7SFQt76UQiOi7BFdE94Z9812TSV46kBe6lBJ3Il39bTUdxNT58TaB', NULL, NULL, NULL),
+(25, 'infos', 'infos@studio-404-paris.fr', '$2y$10$Fa1bbx8ca0AarGrOtj/Ph.XoIAMqZ2ymY4Z8IfL95zbc12NK5uo6i', NULL, NULL, 'ItTCQ5RwxoiqJuiL0RNgopd6AFQNEHSCoAG6ZB2T5yPElbzE5afmZMecw6za', NULL, NULL, NULL);
 
 --
 -- Indexes for dumped tables
@@ -155,19 +159,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
