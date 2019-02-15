@@ -285,11 +285,13 @@ function _forgot($mail)
 
         header('location: index.php?action=forget');
 
-        exit();
-
     } elseif ($affectedLines === "unknownEmail") {
 
         $_SESSION['flash']['danger'] = 'Aucun compte ne correspond à cette adresse mail';
+
+    } elseif ($affectedLines === "invalidEmail") {
+
+        $_SESSION['flash']['danger'] = "L'adresse mail n'est pas valide";
 
     } else {
 

@@ -2,7 +2,8 @@
 class Comment
 {
 
-    protected $_id,
+    protected $_errors,
+    $_id,
     $_idNews,
     $_author,
     $_comment,
@@ -25,66 +26,140 @@ class Comment
         }
     }
 
-    /* Getter */
-    public function id()
+    /**
+     * Get the value of _id
+     */
+    public function errors()
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Get the value of _id
+     */
+    public function get_id()
     {
         return $this->_id;
     }
 
-    public function idNews()
+    /**
+     * Set the value of _id
+     *
+     * @return  self
+     */
+    public function set_id($_id)
+    {
+        $this->_id = (int) $_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of _idNews
+     */
+    public function get_idNews()
     {
         return $this->_idNews;
     }
 
-    public function author()
+    /**
+     * Set the value of _idNews
+     *
+     * @return  self
+     */
+    public function set_idNews(_ $idNews)
+    {
+        $this->_idNews = (int) $_idNews;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of _author
+     */
+    public function get_author()
     {
         return $this->_author;
     }
 
-    public function comment()
+    /**
+     * Set the value of _author
+     *
+     * @return  self
+     */
+    public function set_author($_author)
+    {
+        if (!is_string($_author) || empty($_author)) {
+            $this->errors[] = self::INVALID_AUTHOR;
+        } else {
+            $this->_author = $_author;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of _comment
+     */
+    public function get_comment()
     {
         return $this->_comment;
     }
 
-    public function dateComment()
+    /**
+     * Set the value of _comment
+     *
+     * @return  self
+     */
+    public function set_comment($_comment)
+    {
+
+        if (!is_string($_comment) || empty($_comment)) {
+            $this->errors[] = self::INVALID_COMMENT;
+        } else {
+            $this->_comment = $_comment;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the value of _dateComment
+     */
+    public function get_dateComment()
     {
         return $this->_dateComment;
     }
 
-    public function ratingComment()
+    /**
+     * Set the value of _dateComment
+     *
+     * @return  self
+     */
+    public function set_dateComment(DATETIME $_dateComment)
+    {
+        $this->_dateComment = $_dateComment;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of _ratingComment
+     */
+    public function get_ratingComment()
     {
         return $this->_ratingComment;
     }
 
-    /* Setter */
+    /**
+     * Set the value of _ratingComment
+     *
+     * @return  self
+     */
+    public function set_ratingComment($_ratingComment)
+    {
+        $this->_ratingComment = (int) $_ratingComment;
 
-    public function setId($id)
-    {
-        $id = (int) $id;
-
-        if (is_int($id) && $id > 0) {
-            $this->_id = $id;
-        }
+        return $this;
     }
-    public function setIdNews($idNews)
-    {
-        $this->_idNews = $idNews;
-    }
-    public function setAuthor($author)
-    {
-        $this->_author = $author;
-    }
-    public function setComment($comment)
-    {
-        $this->_comment = $comment;
-    }
-    public function setDateComment($dateComment)
-    {
-        $this->_dateComment = $dateComment;
-    }
-    public function setRatingComment($ratingComment)
-    {
-        $this->_ratingComment = $ratingComment;
-    }
-
 }
