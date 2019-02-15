@@ -1,4 +1,6 @@
 <?php
+require './lib/autoload.php';
+
 require './controller/frontend/frontend.php';
 
 /* switch ($_GET['action']) {

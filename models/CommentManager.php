@@ -1,17 +1,12 @@
 <?php
-class CommentManager
+class CommentManager extends Manager
 {
 
     private $_db;
 
     public function __construct()
     {
-
-        $pdo = new PDO('mysql:dbname=test;host=localhost', 'root', 'root');
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
-
-        $this->_db = $pdo;
+        parent::__construct();
     }
 
     public function add(Comment $comment)
@@ -27,9 +22,9 @@ class CommentManager
     public function comments(Comment $comment)
     {
 
-        $_bdd = setBdd();
+        $_db = setBdd();
 
-        $req = $_bdd->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
+        $req = $_db->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
 
         $req->execute([$comment->id()]);
 
@@ -38,9 +33,9 @@ class CommentManager
 
     public function comment(Comment $comment)
     {
-        $_bdd = setBdd();
+        $_db = setBdd();
 
-        $req = $_bdd->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
+        $req = $_db->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
         $affectedLines = $req->execute(array(
             "id_news" => $comment->id(),
             "author" => $comment->author(),
@@ -52,9 +47,9 @@ class CommentManager
 
     public function rate(Comment $comment)
     {
-        $_bdd = setBdd();
+        $_db = setBdd();
 
-        $Upcomment = $_bdd->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
+        $Upcomment = $_db->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
 
         $affectedLines = $Upcomment->execute([$comment->id()]);
 
@@ -64,9 +59,9 @@ class CommentManager
 
     public function delete(Comment $comment)
     {
-        $_bdd = setBdd();
+        $_db = setBdd();
 
-        $req = $_bdd->prepare('DELETE FROM comments WHERE id = ?');
+        $req = $_db->prepare('DELETE FROM comments WHERE id = ?');
 
         $affectedLines = $req->execute([$comment->id()]);
 
