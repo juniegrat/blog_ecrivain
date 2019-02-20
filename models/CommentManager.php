@@ -2,69 +2,60 @@
 class CommentManager extends Manager
 {
 
-    private $_db;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
+        $this->db = $pdo;
+
     }
 
     public function add(Comment $comment)
     {
-        $req = $this->_db->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
+        $req = $this->db->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
 
         $req->execute(array(
-            "id_news" => $comment->idNews(),
-            "author" => $comment->author(),
-            "comment" => $comment->comment(),
+            "id_news" => $comment->getIdNews(),
+            "author" => $comment->getAuthor(),
+            "comment" => $comment->getComment(),
         ));
-    }
-    public function comments(Comment $comment)
-    {
-
-        $_db = setBdd();
-
-        $req = $_db->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
-
-        $req->execute([$comment->id()]);
-
-        return $comments;
+        return $req;
     }
 
-    public function comment(Comment $comment)
+    public function lists(int $id)
     {
-        $_db = setBdd();
+        $commentsList = [];
 
-        $req = $_db->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
-        $affectedLines = $req->execute(array(
-            "id_news" => $comment->id(),
-            "author" => $comment->author(),
-            "comment" => $comment->comment(),
-        ));
+        $req = $this->db->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
 
-        return $affectedLines;
+        $req->execute([$id]);
+
+        while ($data = $req->fetch()) {
+            $commentsList[] = new Comment($data);
+        }
+
+        return $commentsList;
     }
 
-    public function rate(Comment $comment)
+    public function rate(int $id)
     {
-        $_db = setBdd();
 
-        $Upcomment = $_db->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
+        $req = $this->db->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
 
-        $affectedLines = $Upcomment->execute([$comment->id()]);
+        $req->execute([$id]);
 
-        return $affectedLines;
+        return $req;
 
     }
 
-    public function delete(Comment $comment)
+    public function delete(int $comment)
     {
-        $_db = setBdd();
 
-        $req = $_db->prepare('DELETE FROM comments WHERE id = ?');
+        $req = $this->db->prepare('DELETE FROM comments WHERE id = ?');
 
-        $affectedLines = $req->execute([$comment->id()]);
+        $req->execute([$comment->getId()]);
 
-        return $affectedLines;
+        return $req;
     }
 }

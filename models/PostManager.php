@@ -2,80 +2,90 @@
 class PostManager extends Manager
 {
 
-    protected $_db;
+    private $db;
 
     public function __construct()
     {
         parent::__construct();
+        $this->db = $pdo;
     }
 
-    public function posts()
+    /**
+     * @see NewsManager::count()
+     */
+    public function count()
     {
-        $_db = setBdd();
-
-        $posts = $_db->query('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news ORDER BY date_creation DESC LIMIT 0, 5');
-
-        return $posts;
+        return $this->db->query('SELECT id FROM post')->num_rows;
     }
 
-    public function post(Post $post)
+    public function lists($start = -1, $limit = -1)
     {
+        $postsList = [];
 
-        $_db = setBdd();
+        if ($debut != -1 || $limite != -1) {
+            $req = $this->db->query('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news ORDER BY date_creation DESC LIMIT ' . (int) $limit . ' OFFSET ' . (int) $start);
+        }
 
-        $post = $_db->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
+        while ($data = $req->fetch()) {
+            $postsList[] = new Post($data);
+        }
 
-        $post->execute($post->id());
+        $req->closeCursor();
 
-        return $post;
+        return $postsList;
+    }
+
+    function list(int $id) {
+
+        $postList = [];
+
+        $req = $this->db->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
+
+        $req->execute($post->$ic);
+
+        while ($data = $req->fetch()) {
+            $postList[] = new Post($data);
+        }
+        $req->closeCursor();
+
+        return $postList;
     }
 
     public function add(Post $post)
     {
-        $req = $this->_db->prepare('INSERT INTO news SET id = :id , title = :title, content = :content, date_creation = NOW()');
+        $req = $this->db->prepare('INSERT INTO news SET id = :id , title = :title, content = :content, date_creation = NOW()');
 
         $req->execute(array(
-            "id" => $post->id(),
-            "title" => $post->title(),
-            "content" => $post->content(),
+            "id" => $post->getId(),
+            "title" => $post->getTitle(),
+            "content" => $post->getContent(),
         ));
+
+        return $req;
     }
 
     public function edit(Post $post)
     {
-        $_db = setBdd();
 
-        session_start();
+        $req = $this->db->prepare('UPDATE news SET title = :title, content = :content WHERE id = :id');
 
-        if ($post->title()) {
-            $affectedLines = "emptyTitle";
-        } elseif ($post->content()) {
-            $affectedLines = "emptyContent";
-        } else {
-            $req = $_db->prepare('UPDATE news SET title = :title, content = :cotent WHERE id = :id');
+        $req->execute(array(
+            "title" => (string) $post->getTitle(),
+            "content" => (string) $post->getContent(),
+            "id" => (int) $post->getId(),
+        ));
 
-            $req->execute(array(
-                "title" => $post->title(),
-                "content" => $post->content(),
-                "id" => $post->id(),
-            ));
-
-            $affectedLines = true;
-        }
-
-        return $affectedLines;
-
+        return $req;
     }
-    public function delete(Post $post)
+
+    public function delete(int $id)
     {
 
-        $_db = setBdd();
+        $req = $this->db->prepare('DELETE FROM news WHERE id = ?');
 
-        $req = $_db->prepare('DELETE FROM news WHERE id = ?');
+        $req->execute(array($id));
 
-        $affectedLines = $req->execute(array($post->id()));
-
-        return $affectedLines;
+        return $req;
     }
 
 }
