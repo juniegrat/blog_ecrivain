@@ -16,9 +16,9 @@ class User
     const INVALID_USERNAME = 1;
     const INVALID_EMAIL = 2;
 
-    public function __construct(array $data)
+    public function __construct(array $values = [])
     {
-        $this->hydrate($data);
+        $this->hydrate($values);
     }
 
     public function hydrate(array $data)
@@ -32,12 +32,21 @@ class User
         }
     }
 
-    public function str_random($length)
+    public function strRandom($length)
     {
 
         $alphabet = "01234566789azertyuioopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN";
 
         return substr(str_shuffle(str_repeat($alphabet, $length)), 0, $length);
+    }
+
+    /**
+     * Méthode permettant de savoir si l'user est nouvelle.
+     * @return bool
+     */
+    public function isNew()
+    {
+        return empty($this->id);
     }
 
     /**
