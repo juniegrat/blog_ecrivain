@@ -224,6 +224,14 @@ function _changePassword($password, $passwordConfirm)
     exit();
 }
 
+function _reset($id, $token)
+{
+    $id = getPost($_GET['id']);
+    $token = getComments($_GET['token']);
+    require './views/frontend/resetView.php';
+
+}
+
 function _resetPassword($id, $token, $password, $passwordConfirm)
 {
 
@@ -354,14 +362,6 @@ function _confirmUser($userId, $token)
         header('location: index.php?action=register');
 
     }
-
-}
-
-function _reset($id, $token)
-{
-    $id = getPost($_GET['id']);
-    $token = getComments($_GET['token']);
-    require './views/frontend/resetView.php';
 
 }
 
