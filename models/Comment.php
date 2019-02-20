@@ -2,13 +2,13 @@
 class Comment
 {
 
-    protected $_errors,
-    $_id,
-    $_idNews,
-    $_author,
-    $_comment,
-    $_dateComment,
-        $_ratingComment;
+    protected $errors,
+    $id,
+    $idNews,
+    $author,
+    $comment,
+    $dateComment,
+        $ratingComment;
 
     public function __construct(array $data)
     {
@@ -27,6 +27,15 @@ class Comment
     }
 
     /**
+     * Méthode permettant de savoir si l'user est nouvelle.
+     * @return bool
+     */
+    public function isNew()
+    {
+        return empty($this->id);
+    }
+
+    /**
      * Get the value of _id
      */
     public function errors()
@@ -37,9 +46,9 @@ class Comment
     /**
      * Get the value of _id
      */
-    public function get_id()
+    public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
 
     /**
@@ -47,9 +56,9 @@ class Comment
      *
      * @return  self
      */
-    public function set_id($_id)
+    public function setId($id)
     {
-        $this->_id = (int) $_id;
+        $this->id = (int) $id;
 
         return $this;
     }
@@ -57,9 +66,9 @@ class Comment
     /**
      * Get the value of _idNews
      */
-    public function get_idNews()
+    public function getIdNews()
     {
-        return $this->_idNews;
+        return $this->idNews;
     }
 
     /**
@@ -67,9 +76,9 @@ class Comment
      *
      * @return  self
      */
-    public function set_idNews(_ $idNews)
+    public function setIdNews($idNews)
     {
-        $this->_idNews = (int) $_idNews;
+        $this->idNews = (int) $idNews;
 
         return $this;
     }
@@ -77,9 +86,9 @@ class Comment
     /**
      * Get the value of _author
      */
-    public function get_author()
+    public function getAuthor()
     {
-        return $this->_author;
+        return $this->author;
     }
 
     /**
@@ -87,12 +96,12 @@ class Comment
      *
      * @return  self
      */
-    public function set_author($_author)
+    public function setAuthor($author)
     {
-        if (!is_string($_author) || empty($_author)) {
+        if (!is_string($author) || empty($author)) {
             $this->errors[] = self::INVALID_AUTHOR;
         } else {
-            $this->_author = $_author;
+            $this->author = $author;
         }
 
         return $this;
@@ -101,9 +110,9 @@ class Comment
     /**
      * Get the value of _comment
      */
-    public function get_comment()
+    public function getComment()
     {
-        return $this->_comment;
+        return $this->comment;
     }
 
     /**
@@ -111,13 +120,13 @@ class Comment
      *
      * @return  self
      */
-    public function set_comment($_comment)
+    public function setComment($comment)
     {
 
-        if (!is_string($_comment) || empty($_comment)) {
+        if (!is_string($comment) || empty($comment)) {
             $this->errors[] = self::INVALID_COMMENT;
         } else {
-            $this->_comment = $_comment;
+            $this->comment = $comment;
         }
 
         return $this;
@@ -126,9 +135,9 @@ class Comment
     /**
      * Get the value of _dateComment
      */
-    public function get_dateComment()
+    public function getDateComment()
     {
-        return $this->_dateComment;
+        return $this->dateComment;
     }
 
     /**
@@ -136,9 +145,9 @@ class Comment
      *
      * @return  self
      */
-    public function set_dateComment(DATETIME $_dateComment)
+    public function setDateComment(DATETIME $dateComment)
     {
-        $this->_dateComment = $_dateComment;
+        $this->dateComment = $dateComment;
 
         return $this;
     }
@@ -146,9 +155,9 @@ class Comment
     /**
      * Get the value of _ratingComment
      */
-    public function get_ratingComment()
+    public function getRatingComment()
     {
-        return $this->_ratingComment;
+        return $this->ratingComment;
     }
 
     /**
@@ -156,9 +165,9 @@ class Comment
      *
      * @return  self
      */
-    public function set_ratingComment($_ratingComment)
+    public function setRatingComment($ratingComment)
     {
-        $this->_ratingComment = (int) $_ratingComment;
+        $this->ratingComment = (int) $ratingComment;
 
         return $this;
     }

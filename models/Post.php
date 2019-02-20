@@ -28,6 +28,15 @@ class Post
     }
 
     /**
+     * Méthode permettant de savoir si l'user est nouvelle.
+     * @return bool
+     */
+    public function isNew()
+    {
+        return empty($this->id);
+    }
+
+    /**
      * Get the value of _id
      */
     public function errors()
@@ -38,9 +47,9 @@ class Post
     /**
      * Get the value of _id
      */
-    public function get_id()
+    public function getId()
     {
-        return $this->_id;
+        return $this->id;
     }
 
     /**
@@ -48,32 +57,32 @@ class Post
      *
      * @return  self
      */
-    public function set_id($_id)
+    public function setId($id)
     {
-        $this->_id = (int) $_id;
+        $this->id = (int) $id;
 
         return $this;
     }
 
     /**
-     * Get the value of _title
+     * Get the value of title
      */
-    public function get_title()
+    public function getTitle()
     {
-        return $this->_title;
+        return $this->title;
     }
 
     /**
-     * Set the value of _title
+     * Set the value of title
      *
      * @return  self
      */
-    public function set_title($_title)
+    public function setTitle($title)
     {
-        if (!is_string($_title) || empty($_title)) {
+        if (!is_string($title) || empty($title)) {
             $this->errors[] = self::INVALID_TITLE;
         } else {
-            $this->_title = $_title;
+            $this->title = $title;
         }
 
         return $this;
@@ -81,24 +90,24 @@ class Post
     }
 
     /**
-     * Get the value of _content
+     * Get the value of content
      */
-    public function get_content()
+    public function getContent()
     {
-        return $this->_content;
+        return $this->content;
     }
 
     /**
-     * Set the value of _content
+     * Set the value of content
      *
      * @return  self
      */
-    public function set_content($_content)
+    public function setContent($content)
     {
-        if (!is_string($_content) || empty($_content)) {
+        if (!is_string($content) || empty($content)) {
             $this->errors[] = self::INVALID_CONTENT;
         } else {
-            $this->_content = $_content;
+            $this->content = $content;
         }
 
         return $this;
@@ -107,19 +116,19 @@ class Post
     /**
      * Get the value of _dateCreation
      */
-    public function get_dateCreation()
+    public function getDateCreation()
     {
-        return $this->_dateCreation;
+        return $this->dateCreation;
     }
 
     /**
-     * Set the value of _dateCreation
+     * Set the value of dateCreation
      *
      * @return  self
      */
-    public function set_dateCreation(DATETIME $_dateCreation)
+    public function setDateCreation(DATETIME $dateCreation)
     {
-        $this->_dateCreation = $_dateCreation;
+        $this->dateCreation = $dateCreation;
 
         return $this;
     }
