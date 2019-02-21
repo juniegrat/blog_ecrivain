@@ -11,12 +11,8 @@ class UserManager extends Manager
 
     }
 
-    public function login(User $user)
+    public function login(string $login, string $password, bool $remember)
     {
-        $login = $post->getUsername();
-        $email = $post->getEmail();
-        $password = $post->getPassword();
-
         $req = $this->db->prepare('SELECT * FROM users WHERE username = :username OR email = :username AND confirmed_at IS NOT NULL');
 
         $req->execute(['username' => $login]);
@@ -25,7 +21,7 @@ class UserManager extends Manager
 
         if (password_verify($password, $user->password)) {
 
-            $SESSION['auth'] = $user;
+            $_SESSION['auth'] = $user;
 
             if ($remember) {
 
@@ -49,7 +45,7 @@ class UserManager extends Manager
     {
         setcookie('remember', null, -1);
 
-        unset($SESSION['auth']);
+        unset($_SESSION['auth']);
 
     }
 
@@ -78,7 +74,7 @@ class UserManager extends Manager
         return $affectedLines;
     }
 
-    public function register(User $user)
+    public function register(string $username, email $mail, string $password, string $passwordConfirm)
     {
 
         if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
@@ -135,7 +131,7 @@ class UserManager extends Manager
 
     }
 
-    public function confirm($userId, $token)
+    public function confirm(int $userId, string $token)
     {
 
         $req = $this->db->prepare('SELECT * FROM users WHERE id = ?');
@@ -157,7 +153,7 @@ class UserManager extends Manager
         return $affectedLines;
     }
 
-    public function resetPassword($id, $token, $password, $passwordConfirm)
+    public function resetPassword(int $id, string $token, string $password, string $passwordConfirm)
     {
 
         if (isset($id) && isset($token)) {
@@ -193,7 +189,7 @@ class UserManager extends Manager
         return $affectedLines;
     }
 
-    public function changePassword($password, $passwordConfirm)
+    public function changePassword(string $password, string $passwordConfirm)
     {
 
         if (!empty($password) && $password != $passwordConfirm) {
@@ -201,7 +197,7 @@ class UserManager extends Manager
             $affectedLines = false;
         } else {
 
-            $userId = $SESSION['auth']->id;
+            $userId = $_SESSION['auth']->id;
 
             $hashedpassword = password_hash($password, PASSWORD_BCRYPT);
 

@@ -11,14 +11,14 @@ class CommentManager extends Manager
 
     }
 
-    public function add(Comment $comment)
+    public function add(int $idNews, string $author, string $comment)
     {
         $req = $this->db->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
 
         $req->execute(array(
-            "id_news" => $comment->getIdNews(),
-            "author" => $comment->getAuthor(),
-            "comment" => $comment->getComment(),
+            "id_news" => $idNews,
+            "author" => $author,
+            "comment" => $comment,
         ));
         return $req;
     }
@@ -49,12 +49,12 @@ class CommentManager extends Manager
 
     }
 
-    public function delete(int $comment)
+    public function delete(int $id)
     {
 
         $req = $this->db->prepare('DELETE FROM comments WHERE id = ?');
 
-        $req->execute([$comment->getId()]);
+        $req->execute([$id]);
 
         return $req;
     }
