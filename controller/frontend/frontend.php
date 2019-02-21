@@ -224,7 +224,7 @@ function _changePassword($password, $passwordConfirm)
     exit();
 }
 
-function _reset($id, $token)
+function _reset()
 {
     $id = getPost($_GET['id']);
     $token = getComments($_GET['token']);

@@ -18,11 +18,11 @@ class PostManager extends Manager
         return $this->db->query('SELECT id FROM post')->num_rows;
     }
 
-    public function lists($start = -1, $limit = -1)
+    public function lists(int $start = -1, int $limit = -1)
     {
         $postsList = [];
 
-        if ($debut != -1 || $limite != -1) {
+        if ($start != -1 || $limit != -1) {
             $req = $this->db->query('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news ORDER BY date_creation DESC LIMIT ' . (int) $limit . ' OFFSET ' . (int) $start);
         }
 
@@ -41,7 +41,7 @@ class PostManager extends Manager
 
         $req = $this->db->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
 
-        $req->execute($post->$ic);
+        $req->execute($id);
 
         while ($data = $req->fetch()) {
             $postList[] = new Post($data);
@@ -51,15 +51,15 @@ class PostManager extends Manager
         return $postList;
     }
 
-    public function add(Post $post)
+    public function add(int $id, string $title, string $content)
     {
         $req = $this->db->prepare('INSERT INTO news SET id = :id , title = :title, content = :content, date_creation = NOW()');
 
-        $req->execute(array(
-            "id" => $post->getId(),
-            "title" => $post->getTitle(),
-            "content" => $post->getContent(),
-        ));
+        $req->execute([
+            "id" => $id,
+            "title" => $title,
+            "content" => $content,
+        ]);
 
         return $req;
     }
@@ -69,11 +69,11 @@ class PostManager extends Manager
 
         $req = $this->db->prepare('UPDATE news SET title = :title, content = :content WHERE id = :id');
 
-        $req->execute(array(
+        $req->execute([
             "title" => (string) $post->getTitle(),
             "content" => (string) $post->getContent(),
             "id" => (int) $post->getId(),
-        ));
+        ]);
 
         return $req;
     }
@@ -83,7 +83,7 @@ class PostManager extends Manager
 
         $req = $this->db->prepare('DELETE FROM news WHERE id = ?');
 
-        $req->execute(array($id));
+        $req->execute([$id]);
 
         return $req;
     }
