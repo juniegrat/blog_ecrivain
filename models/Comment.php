@@ -2,13 +2,13 @@
 class Comment
 {
 
-    protected $errors,
-    $id,
-    $idNews,
-    $author,
-    $comment,
-    $dateComment,
-        $ratingComment;
+    protected $errors = [];
+    protected $id;
+    protected $idNews;
+    protected $author;
+    protected $comment;
+    protected $dateComment;
+    protected $ratingComment;
 
     public function __construct(array $data)
     {

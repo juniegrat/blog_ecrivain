@@ -58,4 +58,5 @@ class CommentManager extends Manager
 
         return $req;
     }
+
 }

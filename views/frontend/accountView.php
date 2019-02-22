@@ -18,12 +18,25 @@ var_dump($_POST);
 
 <h1>Bonjour <?=$_SESSION['auth']->username;?></h1>
 
-<form action="index.php?action=changePassword" method="POST">
+<form action="index.php?action=account" method="POST">
     <div class="form-group">
+
         <input class="form-control" type="password" name="password" placeholder="Changer de mot de passe">
+
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
     </div>
+
     <div class="form-group">
+
         <input class="form-control" type="password" name="password_confirm" placeholder="Confirmez le nouveau mot de passe">
+
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
     </div>
 
     <button class="btn btn-primary">Changer mon mot de passe</button>

@@ -41,6 +41,10 @@ unset($_SESSION['errors']);?>
 
         <input type="text" name="username" class="form-control" required/>
 
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
     </div>
 
     <div class="form-group">
@@ -48,6 +52,10 @@ unset($_SESSION['errors']);?>
         <label for="">Email</label>
 
         <input type="email" name="email" class="form-control" required/>
+
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
 
     </div>
 
@@ -57,6 +65,10 @@ unset($_SESSION['errors']);?>
 
         <input type="password" name="password" class="form-control" required/>
 
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
     </div>
 
     <div class="form-group">
@@ -64,6 +76,10 @@ unset($_SESSION['errors']);?>
         <label for="">Confirmez votre mot de passe</label>
 
         <input type="password" name="password_confirm" class="form-control" required/>
+
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
 
     </div>
 

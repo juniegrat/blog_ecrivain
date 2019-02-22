@@ -11,7 +11,7 @@ class PostManager extends Manager
     }
 
     /**
-     * @see NewsManager::count()
+     * @see PostManager::count()
      */
     public function count()
     {
@@ -51,41 +51,42 @@ class PostManager extends Manager
         return $postList;
     }
 
-    public function add(int $id, string $title, string $content)
+    public function delete(int $postId)
     {
-        $req = $this->db->prepare('INSERT INTO news SET id = :id , title = :title, content = :content, date_creation = NOW()');
 
-        $req->execute([
-            "id" => $id,
+        $req = $this->db->prepare('DELETE FROM news WHERE id = ?');
+
+        $affectedLines = $req->execute(array($postId));
+
+        return $affectedLines;
+    }
+
+    public function add(string $title, string $content)
+    {
+
+        $req = $this->db->prepare('INSERT INTO news SET title = :title, content = :content, date_creation = NOW()');
+
+        $affectedLines = $req->execute(array(
             "title" => $title,
             "content" => $content,
-        ]);
+        ));
 
-        return $req;
+        return $affectedLines;
     }
 
     public function edit(Post $post)
     {
 
-        $req = $this->db->prepare('UPDATE news SET title = :title, content = :content WHERE id = :id');
+        $req = $this->db->prepare('UPDATE news SET title = :title, content = :content WHERE id = :postId');
 
-        $req->execute([
+        $affectedLines = $req->execute([
             "title" => (string) $post->getTitle(),
             "content" => (string) $post->getContent(),
             "id" => (int) $post->getId(),
         ]);
 
-        return $req;
-    }
+        return $affectedLines;
 
-    public function delete(int $id)
-    {
-
-        $req = $this->db->prepare('DELETE FROM news WHERE id = ?');
-
-        $req->execute([$id]);
-
-        return $req;
     }
 
 }

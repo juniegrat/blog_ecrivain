@@ -121,19 +121,12 @@
     {
         $_bdd = setBdd();
 
-        session_start();
+        $req = $_bdd->prepare('UPDATE news SET title = :title, content = :content WHERE id = :postId');
 
-        if (empty($title)) {
-            $affectedLines = "emptyTitle";
-        } elseif (empty($content)) {
-            $affectedLines = "emptyContent";
-        } else {
-            $req = $_bdd->prepare('UPDATE news SET title = ?, content = ? WHERE id = ?');
-
-            $req->execute([$title, $content, $postId]);
-
-            $affectedLines = true;
-        }
+        $affectedLines = $req->execute([
+            "title" => $title,
+            "content" => $content,
+            "postId" => $postId]);
 
         return $affectedLines;
 
@@ -149,8 +142,6 @@
         $req->execute(['username' => $login]);
 
         $user = $req->fetch();
-
-        session_start();
 
         if (password_verify($password, $user->password)) {
 
@@ -170,7 +161,7 @@
 
         } else {
 
-            $affectedLines = "invalid";
+            $affectedLines = "invalidCredentials";
 
         }
 
@@ -178,7 +169,6 @@
     }
     function logout()
     {
-        session_start();
 
         setcookie('remember', null, -1);
 
@@ -205,52 +195,38 @@
 
             $reset_token = str_random(60);
 
-            $_bdd->prepare('UPDATE users SET reset_token = ?, reset_at = NOW() WHERE id = ?')->execute([$reset_token, $user->id]);
+            $affectedLines = $_bdd->prepare('UPDATE users SET reset_token = ?, reset_at = NOW() WHERE id = ?')->execute([$reset_token, $user->id]);
 
             mail($mail, 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=reset&id={$user->id}&token=$reset_token");
 
-        } elseif (empty($mail) || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-            $affectedLines = "invalidEmail";
         } else {
 
-            $affectedLines = "unknownEmail";
+            $affectedLines = false;
+
         }
 
         return $affectedLines;
     }
 
-    function registering($username, $mail, $password, $passwordConfirm)
+    function registering($username, $mail, $password, $errors)
     {
 
         $_bdd = setBdd();
 
         $errors = [];
 
-        if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
-
-            $errors['username'] = "Votre pseudo n'est pas valide (alphanumérique)";
-        } else {
-            $req = $_bdd->prepare('SELECT id FROM users WHERE username = ?');
-            $req->execute([$username]);
-            $user = $req->fetch();
-            if ($user) {
-                $errors['username'] = 'Ce pseudo est déjà pris';
-            }
+        $req = $_bdd->prepare('SELECT id FROM users WHERE username = ?');
+        $req->execute([$username]);
+        $user = $req->fetch();
+        if ($user) {
+            $errors['username'] = 'Ce pseudo est déjà pris';
         }
 
-        if (empty($mail) || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "Votre email n'est pas valide";
-        } else {
-            $req = $_bdd->prepare('SELECT id FROM users WHERE email = ?');
-            $req->execute([$mail]);
-            $user = $req->fetch();
-            if ($user) {
-                $errors['email'] = 'Cet email est déjà utilisé pour un autre compte';
-            }
-        }
-
-        if (empty($password) || $password != $passwordConfirm) {
-            $errors['password'] = "Vous devez rentrer un mot de passe valide";
+        $req = $_bdd->prepare('SELECT id FROM users WHERE email = ?');
+        $req->execute([$mail]);
+        $user = $req->fetch();
+        if ($user) {
+            $errors['email'] = 'Cet email est déjà utilisé pour un autre compte';
         }
 
         if (empty($errors)) {
@@ -318,48 +294,30 @@
 
             if ($user) {
 
-                if (!empty($password && $passwordConfirm)) {
-                    if (!empty($password) && $password == $passwordConfirm) {
+                $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+                $affectedLines = $_bdd->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $id]);
 
-                        $affectedLines = $_bdd->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $id]);
-
-                    }
-                } else {
-
-                    $affectedLines = "empty";
-
-                }
+            } else {
+                $affectedLines = false;
             }
-        } else {
 
-            $affectedLines = "invalidToken";
+            return $affectedLines;
 
         }
-
-        return $affectedLines;
     }
 
-    function changePassword($password, $passwordConfirm)
+    function changePassword($password, $userId)
     {
 
         $_bdd = setBdd();
 
-        session_start();
+        $hashedpassword = password_hash($password, PASSWORD_BCRYPT);
 
-        if (!empty($password) && $password != $passwordConfirm) {
-
-            $affectedLines = false;
-        } else {
-
-            $userId = $_SESSION['auth']->id;
-
-            $hashedpassword = password_hash($password, PASSWORD_BCRYPT);
-
-            $affectedLines = $_bdd->prepare('UPDATE users SET password = ?')->execute([$hashedpassword]);
-
-        }
+        $affectedLines = $_bdd->prepare('UPDATE users SET password = :password WHERE user_id = :user_id ')->execute([
+            "password" => $hashedpassword,
+            "user_id" => $userId,
+        ]);
 
         return $affectedLines;
 

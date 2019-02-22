@@ -34,10 +34,23 @@ $_SESSION['flash']['success'] = "L'article à bien été publié";
 
 <div class="editor">
 <form action="index.php?action=addPost" method="POST">
+
         <input id="newsTitle" type="text" name="title" placeholder="Entrez un titre" > </div>
+
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
         <textarea class="mytextarea-body" name="content" placeholder="Entrez du contenu" > </textarea>
+
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
     <br>
+
     <button class="btn btn-primary">Publier</button>
+
 </form>
 </div>
 

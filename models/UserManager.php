@@ -13,6 +13,7 @@ class UserManager extends Manager
 
     public function login(string $login, string $password, bool $remember)
     {
+
         $req = $this->db->prepare('SELECT * FROM users WHERE username = :username OR email = :username AND confirmed_at IS NOT NULL');
 
         $req->execute(['username' => $login]);
@@ -33,23 +34,30 @@ class UserManager extends Manager
 
             }
 
+            $affectedLines = true;
+
         } else {
 
-            throw new Exception($e);
+            $affectedLines = "invalidCredentials";
 
         }
 
+        return $affectedLines;
     }
-
     public function logout()
     {
+
         setcookie('remember', null, -1);
 
         unset($_SESSION['auth']);
 
+        $affectedLines = true;
+
+        return $affectedLines;
+
     }
 
-    public function forget(string $mail)
+    public function forgot(string $mail)
     {
 
         $req = $this->db->prepare('SELECT * FROM users WHERE email = ? AND confirmed_at IS NOT NULL');
@@ -62,46 +70,36 @@ class UserManager extends Manager
 
             $reset_token = str_random(60);
 
-            $this->db->prepare('UPDATE users SET reset_token = ?, reset_at = NOW() WHERE id = ?')->execute([$reset_token, $user->id]);
+            $affectedLines = $this->db->prepare('UPDATE users SET reset_token = ?, reset_at = NOW() WHERE id = ?')->execute([$reset_token, $user->id]);
 
             mail($mail, 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=reset&id={$user->id}&token=$reset_token");
 
         } else {
 
-            $affectedLines = "unknownEmail";
+            $affectedLines = false;
+
         }
 
         return $affectedLines;
     }
 
-    public function register(string $username, email $mail, string $password, string $passwordConfirm)
+    public function registering(string $username, email $mail, string $password, array $errors)
     {
 
-        if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+        $errors = [];
 
-            $errors['username'] = "Votre pseudo n'est pas valide (alphanumérique)";
-        } else {
-            $req = $this->db->prepare('SELECT id FROM users WHERE username = ?');
-            $req->execute([$username]);
-            $user = $req->fetch();
-            if ($user) {
-                $errors['username'] = 'Ce pseudo est déjà pris';
-            }
+        $req = $this->db->prepare('SELECT id FROM users WHERE username = ?');
+        $req->execute([$username]);
+        $user = $req->fetch();
+        if ($user) {
+            $errors['username'] = 'Ce pseudo est déjà pris';
         }
 
-        if (empty($mail) || !filter_var($mail, FILTER_VALIDATE_EMAIL)) {
-            $errors['email'] = "Votre email n'est pas valide";
-        } else {
-            $req = $this->db->prepare('SELECT id FROM users WHERE email = ?');
-            $req->execute([$mail]);
-            $user = $req->fetch();
-            if ($user) {
-                $errors['email'] = 'Cet email est déjà utilisé pour un autre compte';
-            }
-        }
-
-        if (empty($password) || $password != $passwordConfirm) {
-            $errors['password'] = "Vous devez rentrer un mot de passe valide";
+        $req = $this->db->prepare('SELECT id FROM users WHERE email = ?');
+        $req->execute([$mail]);
+        $user = $req->fetch();
+        if ($user) {
+            $errors['email'] = 'Cet email est déjà utilisé pour un autre compte';
         }
 
         if (empty($errors)) {
@@ -122,7 +120,7 @@ class UserManager extends Manager
 
         } else {
 
-            $SESSION['errors'] = $errors;
+            $_SESSION['errors'] = $errors;
 
             $affectedLines = false;
         }
@@ -153,7 +151,7 @@ class UserManager extends Manager
         return $affectedLines;
     }
 
-    public function resetPassword(int $id, string $token, string $password, string $passwordConfirm)
+    public function resetPassword(int $id, string $token, string $password)
     {
 
         if (isset($id) && isset($token)) {
@@ -166,46 +164,30 @@ class UserManager extends Manager
 
             if ($user) {
 
-                if (!empty($password && $passwordConfirm)) {
-                    if (!empty($password) && $password == $passwordConfirm) {
+                $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-                        $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+                $affectedLines = $this->db->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $id]);
 
-                        $affectedLines = $this->db->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL')->execute([$hashedPassword]);
-
-                    }
-                } else {
-
-                    throw new RuntimeException('empty');
-
-                }
+            } else {
+                $affectedLines = false;
             }
-        } else {
 
-            throw new RuntimeException('invalidToken');
+            return $affectedLines;
 
         }
-
-        return $affectedLines;
     }
 
-    public function changePassword(string $password, string $passwordConfirm)
+    public function changePassword(string $password, int $userId)
     {
 
-        if (!empty($password) && $password != $passwordConfirm) {
+        $hashedpassword = password_hash($password, PASSWORD_BCRYPT);
 
-            $affectedLines = false;
-        } else {
+        $affectedLines = $this->db->prepare('UPDATE users SET password = :password WHERE user_id = :user_id ')->execute([
+            "password" => $hashedpassword,
+            "user_id" => $userId,
+        ]);
 
-            $userId = $_SESSION['auth']->id;
-
-            $hashedpassword = password_hash($password, PASSWORD_BCRYPT);
-
-            $req = $this->db->prepare('UPDATE users SET password = ?')->execute([$hashedpassword]);
-
-        }
-
-        return $req;
+        return $affectedLines;
 
     }
 
