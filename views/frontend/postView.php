@@ -70,8 +70,10 @@ if ($_SESSION && $_SESSION['auth']): ?>
 <form action="index.php?action=addComment&amp;id=<?=$_GET['id']?>" method="POST">
     <div class="form-group">
         <textarea class="form-control" name="comment" placeholder="Contenu du commentaire"></textarea>
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
     </div>
-    <input type="hidden" name="author" value="<?=$_SESSION['auth']->username?>">
     <button class="btn btn-primary">Envoyer</button>
 </form>
 

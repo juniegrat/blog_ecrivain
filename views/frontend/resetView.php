@@ -15,7 +15,7 @@ var_dump($_POST);
 
 <h1>Réinitialisation du mot de passe</h1>
 
-<form action='index.php?action=resetPassword&id=<?=$id;?>&token=<?=$token;?>'  method="POST">
+<form action='index.php?action=reset&id=<?=$id;?>&token=<?=$token;?>'  method="POST">
     <div class="form-group">
         <input class="form-control" type="password" name="password" placeholder="Nouveau de mot de passe">
     </div>

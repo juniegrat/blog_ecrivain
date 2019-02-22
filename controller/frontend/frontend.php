@@ -3,8 +3,6 @@ require './models/frontend.php';
 
 /* require './inc/functions.php'; */
 
-session_start();
-
 function _listPosts()
 {
     $posts = getPosts();
@@ -12,42 +10,81 @@ function _listPosts()
     require './views/frontend/listPostsView.php';
 }
 
-function _post()
+function _listPost()
 {
-    $post = getPost($_GET['id']);
-    $comments = getComments($_GET['id']);
-
+    $post = $_GET['id'];
+    $comments = $_GET['id'];
     require './views/frontend/postView.php';
 }
 
-function _addComment($postId, $author, $comment)
+function _addComment()
 {
-    $affectedLines = postComment($postId, $author, $comment);
-    session_start();
-    if ($affectedLines === false) {
-        $_SESSION['flash']['success'] = "Le commentaire n'a pas pu être posté";
+    $postId = $_GET['id'];
+    $author = $_SESSION['auth']->username;
+    $comment = $_POST['comment'];
+
+    if (empty($comment)) {
+
+        $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
+
+        _post();
+
+    } elseif (empty($postId)) {
+
+        $_SESSION['flash']['danger'] = "Identifiant commentaire invalide";
+
     } else {
-        $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
+
+        $affectedLines = postComment($postId, $author, $comment);
+
+        if ($affectedLines === false) {
+
+            $_SESSION['flash']['danger'] = "Le commentaire n'a pas pu être posté";
+
+        } else {
+
+            $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
+
+        }
+
+        header('Location: index.php?action=post&id=' . $postId);
+
     }
-    header('Location: index.php?action=post&id=' . $postId);
+
 }
-function _rateComment($commentId, $postId)
+function _rateComment()
 {
-    $affectedLines = rateComment($commentId, $postId);
+    $commentId = $_GET['commentId'];
+    $postId = $_GET['postId'];
 
-    session_start();
+    if (!empty($_POST)) {
 
-    if ($affectedLines === true) {
+        if (empty($commentId)) {
 
-        $_SESSION['flash']['success'] = "Le commentaire à bien été upvote";
+            $_SESSION['flash']['danger'] = "Veuillez entrer un identifiant valide";
 
-    } else {
+        } elseif (empty($postId)) {
 
-        $_SESSION['flash']['danger'] = "Il y eu une erreur veuillez réessayer plus tard";
+            $_SESSION['flash']['danger'] = "Veuillez entrer un titre";
 
+        } else {
+        }
+
+        $affectedLines = rateComment($commentId, $postId);
+
+        if ($affectedLines === true) {
+
+            $_SESSION['flash']['success'] = "Le commentaire à bien été upvote";
+
+        } else {
+
+            $_SESSION['flash']['danger'] = "Il y eu une erreur veuillez réessayer plus tard";
+
+        }
+
+        header('location: index.php?action=post&id=' . $postId);
     }
 
-    header('location: index.php?action=post&id=' . $postId);
 }
 
 function _admin()
@@ -56,129 +93,175 @@ function _admin()
 
     require './views/frontend/adminView.php';
 }
-function _edit()
+
+function _editPost()
 {
+    $title = $_POST['title'];
+    $content = $_POST['content'];
+    $postId = $_GET['id'];
+
+    if (!empty($_POST)) {
+
+        if (empty($title) || empty($content) || empty($postId)) {
+
+            $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
+
+        } elseif (empty($title)) {
+
+            $_SESSION['flash']['danger'] = "Veuillez remplir le titre";
+
+        } elseif (empty($content)) {
+
+            $_SESSION['flash']['danger'] = "Veuillez remplir le contenu";
+
+        } else {
+
+            editPost($title, $content, $postId);
+
+            $_SESSION['flash']['success'] = "L'article à bien été modifié";
+
+            header('location: index.php?action=edit&id=' . $postId);
+
+        }
+
+    }
+
     $post = getPost($_GET['id']);
     $comments = getComments($_GET['id']);
 
     require './views/frontend/editView.php';
 }
 
-function _editPost($title, $content, $postId)
+function _deleteComment()
 {
+    $commId = $_GET['id'];
+    $postId = $_GET['postId'];
 
-    $affectedLines = editPost($title, $content, $postId);
+    if (empty($commId) || empty($postId)) {
 
-    if ($affectedLines === "emptyTitle") {
-        $_SESSION['flash']['danger'] = "Veuillez entrer un titre";
-    } elseif ($affectedLines === "emptyContent") {
-        $_SESSION['flash']['danger'] = "Veuillez entrer du contenu";
+        $_SESSION['flash']['danger'] = "Veuillez rentrer des identifiants valides";
+
     } else {
-        $_SESSION['flash']['success'] = "L'article à bien été modifié";
+
+        $affectedLines = deleteComment($commId, $postId);
+
+        if ($affectedLines === true) {
+
+            $_SESSION['flash']['success'] = "Le commentaire à bien été supprimé";
+
+        } else {
+
+            $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+
+        }
     }
     header('location: index.php?action=edit&id=' . $postId);
-}
-
-function _deleteComment($commId, $postId)
-{
-
-    $affectedLines = deleteComment($commId, $postId);
-
-    session_start();
-
-    if ($affectedLines === true) {
-
-        $_SESSION['flash']['success'] = "Le commentaire à bien été supprimé";
-
-    } else {
-
-        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
-    }
-
-    header('location: index.php?action=edit&id=' . $postId);
 
     exit();
 }
 
-function _deletePost($postId)
+function _deletePost()
 {
 
-    $affectedLines = deletePost($postId);
+    $postId = $_GET['id'];
 
-    session_start();
+    if (empty($postId)) {
 
-    if ($affectedLines === true) {
-
-        $_SESSION['flash']['success'] = "L'article à bien été supprimé";
+        $_SESSION['flash']['danger'] = "Veuillez rentrer un identifiant valide";
 
     } else {
 
-        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+        $affectedLines = deletePost($postId);
+
+        if ($affectedLines === true) {
+
+            $_SESSION['flash']['success'] = "L'article à bien été supprimé";
+
+        } else {
+
+            $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+
+        }
+
+        header('location: index.php?action=admin');
+
+        exit();
 
     }
-
-    header('location: index.php?action=admin');
-
-    exit();
 }
 
-function _add()
+function _addPost()
 {
-    require './views/frontend/addView.php';
-}
+    $postTitle = $_POST['title'];
+    $postContent = $_POST['content'];
 
-function _addPost($postTitle, $postContent)
-{
+    if (!empty($_POST)) {
 
-    $affectedLines = addPost($postTitle, $postContent);
+        $validation = true;
 
-    session_start();
+        if (empty($postTitle) || empty($postContent)) {
 
-    if ($affectedLines === true) {
+            $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
 
-        $_SESSION['flash']['success'] = "L'article à bien été publié";
+            $validation = false;
+        }
 
-    } else {
+        if ($validation) {
 
-        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+            addPost($postTitle, $postContent);
 
+            header('location: index.php?action=admin');
+
+            exit();
+
+        } else {
+
+            $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+
+        }
     }
 
-    header('location: index.php?action=admin');
-
-    exit();
+    require './views/frontend/addPostView.php';
 }
 
 function _login()
 {
+    $login = $_POST['username'];
+    $password = $_POST['password'];
+    $remember = $_POST['remember'];
+
+    if (!empty($_POST)) {
+
+        if (empty($login) || empty($password)) {
+
+            $_SESSION['flash']['success'] = "Veuillez remplir tout les champs";
+
+        } else {
+
+            $affectedLines = loginIn($login, $password, $remember);
+
+            if ($affectedLines === true) {
+
+                $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
+
+                header('location: index.php?action=account');
+
+                exit();
+
+            } elseif ($affectedLines = "invalidCredentials") {
+
+                $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
+
+                header('location: index.php?action=loggin');
+
+                exit();
+            }
+
+        }
+    }
+
     require './views/frontend/loginView.php';
 
-}
-
-function _loginIn($login, $password, $remember)
-{
-
-    $affectedLines = loginIn($login, $password, $remember);
-
-    session_start();
-
-    if ($affectedLines === true) {
-
-        $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
-
-        header('location: index.php?action=account');
-
-        exit();
-
-    } elseif ($affectedLines = "invalid") {
-
-        $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
-
-        header('location: index.php?action=loggin');
-
-        exit();
-    }
 }
 
 function _logout()
@@ -186,13 +269,12 @@ function _logout()
 
     $affectedLines = logout();
 
-    session_start();
-
     if ($affectedLines) {
 
         $_SESSION['flash']['success'] = "Vous êtes maintenant déconnecté";
 
         header('location: index.php?action=loggin');
+
     } else {
 
         $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
@@ -202,172 +284,231 @@ function _logout()
 function _account()
 {
 
+    $password = $_POST['password'];
+    $passwordConfirm = $_POST['password_confirm'];
+    $userId = $_SESSION['auth']->id;
+
+    if (!empty($_POST)) {
+
+        if (empty($password) || empty($passwordConfirm)) {
+
+            $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
+
+        }if ($password != $passwordConfirm) {
+
+            $_SESSION['flash']['danger'] = "Les mots de passes ne correspondent pas";
+
+        } else {
+
+            $affectedLines = changePassword($password, $userId);
+
+            if ($affectedLines === true) {
+
+                $_SESSION['flash']['success'] = "Votre mot de passe à bien été mis à jour";
+
+                header('location: index.php?action=account');
+
+                exit();
+            } else {
+
+                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+
+                header('location: index.php?action=account');
+
+                exit();
+            }
+
+        }
+
+    }
+
     require './views/frontend/accountView.php';
 
 }
 
-function _changePassword($password, $passwordConfirm)
-{
-
-    $affectedLines = changePassword($password, $passwordConfirm);
-
-    session_start();
-
-    if ($affectedLines === false) {
-        $_SESSION['flash']['danger'] = "Les mots de passes ne correspondent pas";
-    } else {
-        $_SESSION['flash']['success'] = "Votre mot de passe à bien été mis à jour";
-    }
-
-    header('location: index.php?action=account');
-
-    exit();
-}
-
 function _reset()
 {
-    $id = getPost($_GET['id']);
-    $token = getComments($_GET['token']);
-    require './views/frontend/resetView.php';
 
-}
+    $id = $_POST['id'];
+    $token = $_GET['token'];
+    $password = $_POST['password'];
+    $passwordConfirm = $_POST['password_confirm'];
 
-function _resetPassword($id, $token, $password, $passwordConfirm)
-{
-
-    $affectedLines = resetPassword($id, $token, $password, $passwordConfirm);
-
-    session_start();
-
-    if ($affectedLines === true) {
-
-        $_SESSION['flash']['success'] = "Votre mot de passe à bien été modifié";
-
-        $_SESSION['auth'] = $user;
-
-        header('location: index.php?action=account');
-
-        exit();
-
-    } elseif ($affectedLines === "empty") {
+    if (empty($password) && empty($passwordConfirm)) {
 
         $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
 
-        header('location: index.php?action=reset&id=' . $id . '&token=' . $token);
+        header('location: index.php?action=loggin');
 
-        exit();
-    } elseif ($affectedLines === "invalidToken") {
+    } elseif ($password != $passwordConfirm) {
 
-        $_SESSION['flash']['danger'] = "Ce token n'est pas valide";
+        $_SESSION['flash']['danger'] = "Les mots de passes ne correspondent pas";
 
         header('location: index.php?action=loggin');
 
-        exit();
     } else {
-        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
 
-        header('location: index.php?action=loggin');
+        $affectedLines = resetPassword($id, $token, $password, $passwordConfirm);
 
-        exit();
+        if ($affectedLines === true) {
+
+            $_SESSION['flash']['success'] = "Votre mot de passe à bien été modifié";
+
+            header('location: index.php?action=account');
+
+            exit();
+
+        } elseif ($affectedLines === false) {
+
+            $_SESSION['flash']['danger'] = "Ce token n'est pas valide";
+
+            header('location: index.php?action=loggin');
+
+            exit();
+
+        } else {
+
+            $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+
+            header('location: index.php?action=loggin');
+
+            exit();
+        }
+
     }
-
 }
-
 function _forget()
 {
+    $mail = $_POST['mail'];
+
+    if (!empty($_POST)) {
+
+        if (!empty($mail)) {
+
+            $affectedLines = forgot($mail);
+
+            if ($affectedLines == true) {
+
+                $_SESSION['flash']['success'] = "Les instructions du rappel de mot de passe vous ont été envoyés par email";
+
+                header('location: index.php?action=forget');
+
+            } elseif ($affectedLines == false) {
+
+                $_SESSION['flash']['danger'] = 'Aucun compte ne correspond à cette adresse mail';
+
+            } elseif (!filter_var($mail, FILTER_VALIDATE_EMAIL)) {
+
+                $_SESSION['flash']['danger'] = "Veuillez saisir une adresse email valide";
+
+            } else {
+
+                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+
+            }
+
+        }
+
+        $_SESSION['flash']['danger'] = "Veuillez saisir une adresse email";
+
+    }
 
     require './views/frontend/forgetView.php';
 
 }
 
-function _forgot($mail)
-{
-
-    $affectedLines = _forgot($mail);
-
-    session_start();
-
-    if ($affectedLines === true) {
-
-        $_SESSION['flash']['success'] = "Les instructions du rappel de mot de passe vous ont été envoyés par email";
-
-        header('location: index.php?action=forget');
-
-    } elseif ($affectedLines === "unknownEmail") {
-
-        $_SESSION['flash']['danger'] = 'Aucun compte ne correspond à cette adresse mail';
-
-    } elseif ($affectedLines === "invalidEmail") {
-
-        $_SESSION['flash']['danger'] = "L'adresse mail n'est pas valide";
-
-    } else {
-
-        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
-    }
-}
-
 function _register()
 {
 
+    $errors = [];
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $passwordConfirm = $_POST['password_confirm'];
+
+    if (!empty($_POST)) {
+
+        if (empty($username) || !preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+
+            $errors['username'] = "Votre pseudo n'est pas valide (alphanumérique)";
+        }
+
+        if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors['email'] = "Votre email n'est pas valide";
+        }
+
+        if (empty($password) || $password != $passwordConfirm) {
+            $errors['password'] = "Vous devez rentrer un mot de passe valide";
+        }
+
+        if (empty($username) || empty($email) || empty($password) || empty($passwordConfirm)) {
+
+            $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
+
+        } else {
+
+            $affectedLines = registering($username, $email, $password, $errors);
+
+            if ($affectedLines === true) {
+
+                $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour valider votre compte";
+
+                header('Location: index.php?action=loggin');
+
+                exit();
+
+            } else {
+
+                header('Location: index.php?action=register');
+
+            }
+
+        }
+
+    }
     require './views/frontend/registerView.php';
-
 }
 
-function _registering($username, $mail, $password, $passwordConfirm)
+function _confirmUser()
 {
 
-    $affectedLines = registering($username, $mail, $password, $passwordConfirm);
+    $userId = $_SESSION['auth']->id;
 
-    session_start();
+    $token = $_GET['token'];
 
-    if ($affectedLines === true) {
+    if (!empty($_POST)) {
 
-        $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour valider votre compte";
+        if (empty($token)) {
+            $_SESSION['flash']['danger'] = "Veuillez entrer un identifiant valide";
 
-        header('Location: index.php?action=loggin');
+        } else {
 
-        exit();
-    } else {
+            $affectedLines = confirmUser($userId, $token);
 
-        header('Location: index.php?action=register');
-    }
-}
+            if ($affectedLines === true) {
 
-function _confirmUser($userId, $token)
-{
+                $_SESSION['flash']['success'] = "Votre compte à bien été validé";
 
-    $affectedLines = confirmUser($userId, $token);
+                header('location: index.php?action=account');
 
-    session_start();
+            } elseif ($affectedLines === "invalidToken") {
 
-    if ($affectedLines === true) {
+                $_SESSION['flash']['danger'] = "Ce token n'est plus valide";
 
-        $_SESSION['flash']['success'] = "Votre compte à bien été validé";
+                header('location: index.php?action=register');
+            } else {
 
-        $_SESSION['auth'] = $user;
+                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
 
-        header('location: index.php?action=account');
+                header('location: index.php?action=register');
 
-    } elseif ($affectedLines === "invalidToken") {
+            }
 
-        $_SESSION['flash']['danger'] = "Ce token n'est plus valide";
-
-        header('location: index.php?action=register');
-    } else {
-
-        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
-        header('location: index.php?action=register');
+        }
 
     }
-
 }
-
 function _error()
 {
-
     require './views/frontend/errorView.php';
-
 }

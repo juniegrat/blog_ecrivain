@@ -3,138 +3,172 @@ require './lib/autoload.php';
 
 require './controller/frontend/frontend.php';
 
-/* switch ($_GET['action']) {
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-case "listPosts":
-_listPosts();
-break;
-} */
+switch ($_GET['action']) {
 
-if (isset($_GET['action'])) {
-    if ($_GET['action'] == 'listPosts') {
+    case "listPosts":
         _listPosts();
-    } elseif ($_GET['action'] == 'post') {
-        if (isset($_GET['id']) && $_GET['id'] > 0) {
-            _post();
+        break;
+
+    case "post":
+        if (!empty($_GET['id']) && $_GET['id'] > 0) {
+            _listPost();
         } else {
-            echo 'Erreur : aucun identifiant de billet envoyé';
+            $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
         }
-    } elseif ($_GET['action'] == 'addComment') {
-        if (isset($_GET['id']) && $_GET['id'] > 0) {
-            if (!empty($_POST['comment'])) {
-                _addComment($_GET['id'], $_POST['author'], $_POST['comment']);
-            } else {
-                session_start();
-                $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
-                _post();
-            }
+        break;
+
+    case "addComment":
+        if (!empty($_GET['id']) && $_GET['id'] > 0) {
+            _addComment();
         } else {
-            session_start();
-            $_SESSION['flash']['danger'] = "Aucun identifiant de billet envoyé";
+            $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
         }
-    } elseif ($_GET['action'] == 'delete') {
-        if (isset($_GET['id']) && $_GET['id'] > 0) {
+        break;
+
+    case "delete":
+        if (!empty($_GET['id']) && $_GET['id'] > 0) {
             if ($_GET['category'] === 'news') {
-                _deletePost($_GET['id']);
+                _deletePost();
             } else {
-                _deleteComment($_GET['id'], $_GET['postId']);
+                _deleteComment();
             }
-        }
-    } elseif ($_GET['action'] == 'admin') {
-        _admin();
-    } elseif ($_GET['action'] == 'addPost') {
-        if (!empty($_POST['title'] && $_POST['content'])) {
-            _addPost($_POST['title'], $_POST['content']);
         } else {
-            $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
+            $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
         }
-    } elseif ($_GET['action'] == 'edit') {
-        _edit($_GET['id']);
-    } elseif ($_GET['action'] == 'editPost') {
-        _editPost($_POST['title'], $_POST['content'], $_GET['id']);
-    } elseif ($_GET['action'] == 'add') {
-        _add();
-    } elseif ($_GET['action'] == 'rateComment') {
-        _rateComment($_GET['commentId'], $_GET['postId']);
-    } elseif ($_GET['action'] == 'logout') {
-        _logout();
-    } elseif ($_GET['action'] == 'account') {
+        break;
+
+    case "admin":
+        _admin();
+        break;
+
+    case "editPost":
+        _editPost();
+        break;
+
+    case "addPost":
+        _addPost();
+        break;
+
+    case "rateComment":
+        _rateComment();
+        break;
+
+    case "lougout":
+        _lougout();
+        break;
+
+    case "account":
         _account();
-    } elseif ($_GET['action'] == 'login') {
-        _loginIn($_POST['username'], $_POST['password'], $_POST['remember']);
-    } elseif ($_GET['action'] == 'loggedIn') {
-        _account();
-    } elseif ($_GET['action'] == 'forget') {
-        _forget();
-    } elseif ($_GET['action'] == 'reset') {
-        _reset();
-    } elseif ($_GET['action'] == 'resetPassword') {
-        _resetPassword($_GET['id'], $_GET['token'], $_POST['password'], $_POST['password_confirm']);
-    } elseif ($_GET['action'] == 'mail') {
-        _forgot($_POST['email']);
-    } elseif ($_GET['action'] == 'changePassword') {
-        _changePassword($_POST['password'], $_POST['password_confirm']);
-    } elseif ($_GET['action'] == 'loggin') {
+        break;
+
+    case "login":
         _login();
-    } elseif ($_GET['action'] == 'register') {
+        break;
+
+    case "forget" || "mail":
+        _forget();
+        break;
+
+    case "reset":
+        _reset();
+        break;
+
+    case "resetPassword":
+        if (!empty($_GET['id']) && !empty($_GET['token'])) {
+            _resetPassword();
+        } else {
+            $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
+        }
+        break;
+
+    case "login":
+        _login();
+        break;
+
+    case "register" || "newUser":
         _register();
-    } elseif ($_GET['action'] == 'newUser') {
-        _registering($_POST['username'], $_POST['email'], $_POST['password'], $_POST['password_confirm']);
-    } elseif ($_GET['action'] == 'confirm') {
-        _confirmUser($_GET['id'], $_GET['token']);
-    } elseif ($_GET['action'] == 'error') {
+        break;
+
+    case "confirm":
+        if (!empty($_GET['id']) && !empty($_GET['token'])) {
+            _confirmUser();
+        } else {
+            $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
+        }
+        break;
+
+    case "error":
         _error();
-    }
-} else {
-    _listPosts();
+        break;
+
+    default:
+        _listPosts();
+        break;
+
 }
+
+/* if (!empty($_GET['action'])) {
+if ($_GET['action'] == 'listPosts') {
+_listPosts();
+} elseif ($_GET['action'] == 'post') {
+if (!empty($_GET['id']) && $_GET['id'] > 0) {
+_listPost();
+} else {
+$_SESSION['flash']['danger'] = "Identifiant de billet invalide";
+}
+} elseif ($_GET['action'] == 'addComment') {
+if (!empty($_GET['id']) && $_GET['id'] > 0) {
+_addComment();
+} else {
+$_SESSION['flash']['danger'] = "Identifiant de billet invalide";
+}
+} elseif ($_GET['action'] == 'delete') {
+if (!empty($_GET['id']) && $_GET['id'] > 0) {
+if ($_GET['category'] === 'news') {
+_deletePost();
+} else {
+_deleteComment();
+}
+} else {
+$_SESSION['flash']['danger'] = "Identifiant de billet invalide";
+}
+} elseif ($_GET['action'] == 'admin') {
+_admin();
+} elseif ($_GET['action'] == 'editPost') {
+_editPost();
+} elseif ($_GET['action'] == 'addPost') {
+_addPost();
+} elseif ($_GET['action'] == 'rateComment') {
+_rateComment();
+} elseif ($_GET['action'] == 'logout') {
+_logout();
+} elseif ($_GET['action'] == 'account') {
+_account();
+} elseif ($_GET['action'] == 'login') {
+_login();
+} elseif ($_GET['action'] == 'forget' || $_GET['action'] == 'mail') {
+_forget();
+} elseif ($_GET['action'] == 'reset') {
+_reset();
+} elseif ($_GET['action'] == 'resetPassword') {
+if (!empty($_GET['id']) && !empty($_GET['token'])) {
+_resetPassword();
+} else {
+$_SESSION['flash']['danger'] = "Token ou identifiant invalide";
+}
+} elseif ($_GET['action'] == 'loggin') {
+_login();
+} elseif ($_GET['action'] == 'register' || $_GET['action'] == 'newUser') {
+_register();
+} elseif ($_GET['action'] == 'confirm') {
+if (!empty($_GET['id']) && !empty($_GET['token'])) {
+_confirmUser();
+} else {
+$_SESSION['flash']['danger'] = "Token ou identifiant invalide";
+}
+} elseif ($_GET['action'] == 'error') {
+_error();
+}
+} else {
+_listPosts();
+} */

@@ -30,6 +30,10 @@ if (isset($_SESSION['auth'])) {
 
         <input type="text" name="username" class="form-control" required/>
 
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
     </div>
 
 
@@ -41,6 +45,10 @@ if (isset($_SESSION['auth'])) {
 
         <input type="password" name="password" class="form-control" required/>
 
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+
     </div>
 
     <div class="form-group">
@@ -51,6 +59,10 @@ if (isset($_SESSION['auth'])) {
 
 
     <button type="submit" class="btn btn-primary">Se connecter</button>
+
+
+    <a href="index.php?action=register">Pas encore de compte ?</a>
+
 
 </form>
 

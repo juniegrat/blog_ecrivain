@@ -57,9 +57,21 @@ $comments->closeCursor();
 ?>
 
 <form action="index.php?action=editPost&id=<?=$_GET['id'];?>" method="POST">
+
     <div class="editor">
-<input id="newsTitle" type="text" name="title" placeholder="Entrez un titre" > </div>
-<textarea class="mytextarea-body" name="content" placeholder="Entrez du contenu" > </textarea>
+        <input id="newsTitle" type="text" name="title" placeholder="Entrez un titre" >
+
+        <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+        </div>
+    </div>
+
+    <textarea class="mytextarea-body" name="content" placeholder="Entrez du contenu" > </textarea>
+
+    <div class="invalid-feedback">
+        Veuillez ajouter un nom valide.
+    </div>
+
     <br>
     <button class="btn btn-primary">Modifier</button>
 </form>

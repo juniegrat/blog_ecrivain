@@ -13,6 +13,10 @@
 
     <input type="email" name="email" class="form-control" required/>
 
+    <div class="invalid-feedback">
+            Veuillez ajouter un nom valide.
+    </div>
+
 </div>
 
 
