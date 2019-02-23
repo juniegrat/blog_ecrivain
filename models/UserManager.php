@@ -57,12 +57,12 @@ class UserManager extends Manager
 
     }
 
-    public function forgot(string $mail)
+    public function forget(string $email)
     {
 
         $req = $this->db->prepare('SELECT * FROM users WHERE email = ? AND confirmed_at IS NOT NULL');
 
-        $req->execute([$mail]);
+        $req->execute([$email]);
 
         $user = $req->fetch();
 
@@ -83,7 +83,7 @@ class UserManager extends Manager
         return $affectedLines;
     }
 
-    public function registering(string $username, email $mail, string $password, array $errors)
+    public function register(string $username, email $mail, string $password, array $errors)
     {
 
         $errors = [];
@@ -151,14 +151,14 @@ class UserManager extends Manager
         return $affectedLines;
     }
 
-    public function resetPassword(int $id, string $token, string $password)
+    public function resetPassword(int $userId, string $token, string $password)
     {
 
-        if (isset($id) && isset($token)) {
+        if (isset($userId) && isset($token)) {
 
             $req = $this->db->prepare('SELECT * FROM users WHERE id = ? AND reset_token IS NOT NULL AND reset_token = ? AND reset_at > DATE_SUB(NOW(), INTERVAL 30 MINUTE)');
 
-            $req->execute([$id, $token]);
+            $req->execute([$userId, $token]);
 
             $user = $req->fetch();
 

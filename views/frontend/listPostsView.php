@@ -15,26 +15,25 @@ if ($_SESSION && $_SESSION['auth']->admin == 1) {
 
 // On récupère les 5 derniers billets
 
-while ($data = $posts->fetch()) {
+foreach ($posts as $post) {
     ?>
 <div class="news">
     <h3>
-        <?=htmlspecialchars($data->title);?>
-        <em>le <?=$data->date_creation_fr;?></em>
+        <?=htmlspecialchars($posts->title);?>
+        <em>le <?=$posts->date_creation_fr;?></em>
     </h3>
 
     <p>
     <?=
     // On affiche le contenu du billet
-    nl2br($data->content);
+    nl2br($posts->content);
     ?>
     <br />
-    <em><a href="index.php?action=post&amp;id=<?=$data->id?>">Commentaires</a></em>
+    <em><a href="index.php?action=post&amp;id=<?=$posts->id?>">Commentaires</a></em>
     </p>
 </div>
 <?php
-} // Fin de la boucle des billets
-$posts->closeCursor();
+}
 
 ?>
 <?php $content = ob_get_clean();?>

@@ -1,5 +1,4 @@
 <?php
-require './lib/autoload.php';
 
 require './controller/frontend/frontend.php';
 

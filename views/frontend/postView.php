@@ -16,20 +16,20 @@
 
 // On récupère l'article
 
-while ($data = $post->fetch()) {
+foreach ($posts as $post) {
     ?>
     <p><a href="index.php?action=listPosts">Retour à la liste des billets</a></p>
 
     <div class="news">
         <h3>
-            <?=$data->title;?>
-            <em>le <?=$data->date_creation_fr;?></em>
+            <?=$post->title;?>
+            <em>le <?=$post->date_creation_fr;?></em>
         </h3>
 
         <p>
             <?=
     // On affiche le contenu du billet
-    nl2br($data->content);
+    nl2br($post->content);
     ?>
         <br/>
         </p>
@@ -41,28 +41,27 @@ $post->closeCursor();
 
 // Récupération des commentaires
 
-while ($data = $comments->fetch()) {
+foreach ($comments as $comment) {
     ?>
     <div class="comment">
         <div class="comment-heading">
 
-            <form action="index.php?action=rateComment&commentId=<?=$data->id;?>&postId=<?=$_GET['id'];?>" method="POST">
+            <form action="index.php?action=rateComment&commentId=<?=$comment->id;?>&postId=<?=$_GET['id'];?>" method="POST">
                     <input type="submit" id=commentButton name="commentButton"  value=&radic;  >
-                    <input type="hidden" id=commentId name="commentId"  value=<?=$data->id;?>  >
+                    <input type="hidden" id=commentId name="commentId"  value=<?=$comment->id;?>  >
             </form>
 
                 <strong>
-                    <?=htmlspecialchars($data->author);?>
+                    <?=htmlspecialchars($comment->author);?>
                 </strong>
-                le <?=$data->date_comment_fr;?>
+                le <?=$comment->date_comment_fr;?>
 
-               <strong>+<?=$data->rating_comment?> Votes</strong>
+               <strong>+<?=$comment->rating_comment?> Votes</strong>
     </div>
-        <?=nl2br(htmlspecialchars($data->comment));?>
+        <?=nl2br(htmlspecialchars($comment->comment));?>
     </div>
     <?php
-} // Fin de la boucle des commentaires
-$comments->closeCursor();
+}
 ?>
 <?php
 if ($_SESSION && $_SESSION['auth']): ?>

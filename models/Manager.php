@@ -1,5 +1,5 @@
 <?php
-class Manager
+abstract class Manager
 {
     protected function __construct()
     {
