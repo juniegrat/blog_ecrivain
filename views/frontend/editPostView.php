@@ -12,44 +12,36 @@ admin_only();
 
 <?php ob_start();?>
 
-<?php
-
-// On récupère l'article
-
-while ($data = $post->fetch()) {
-    ?>
     <p><a href="index.php?action=admin">Retour à la liste des billets</a></p>
 
     <div class="news">
         <h3>
-            <?=htmlspecialchars($data->title);?>
-            <em>le <?=$data->date_creation_fr;?></em>
+            <?=htmlspecialchars($post->title);?>
+            <em>le <?=$post->date_creation_fr;?></em>
         </h3>
 
         <div>
-            <?=nl2br($data->content);?>
+            <?=nl2br($post->content);?>
             <br/>
             </div>
     </div>
     <?php
-} // Fin de la boucle des billets
-$post->closeCursor();
 
 // Récupération des commentaires
 
-while ($data = $comments->fetch()) {
+foreach ($comments as $comment) {
     ?>
     <div class="comment">
             <p>
                     <a
-                    href="index.php?action=delete&id=<?=$data->id;?>&postId=<?=$_GET['id']?>&category=comments">&times;
+                    href="index.php?action=delete&id=<?=$comment->id;?>&postId=<?=$_GET['id']?>&category=comments">&times;
                     </a>
         <strong>
-            <?=htmlspecialchars($data->author);?>
+            <?=htmlspecialchars($comment->author);?>
         </strong>
-        le <?=$data->date_comment_fr;?>
+        le <?=$comment->date_comment_fr;?>
     </p>
-    <?=nl2br(htmlspecialchars($data->comment));?>
+    <?=nl2br(htmlspecialchars($comment->comment));?>
     </div>
     <?php
 } // Fin de la boucle des commentaires

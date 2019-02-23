@@ -1,11 +1,16 @@
 <?php
-require './models/frontend.php';
+require './lib/autoload.php';
 
 class CommentController
 {
 
+    protected $commentManager;
+
     public function __construct()
     {
+
+        $this->commentManager = new CommentManager;
+
     }
 
     public function _addComment()
@@ -24,7 +29,7 @@ class CommentController
 
         } else {
 
-            $affectedLines = post($postId, $author, $comment);
+            $affectedLines = $this->commentManager->post($postId, $author, $comment);
 
             if ($affectedLines === false) {
 
@@ -59,7 +64,7 @@ class CommentController
             } else {
             }
 
-            $affectedLines = rate($commentId, $postId);
+            $affectedLines = $this->commentManager->rate($commentId, $postId);
 
             if ($affectedLines === true) {
 
@@ -87,7 +92,7 @@ class CommentController
 
         } else {
 
-            $affectedLines = delete($commId, $postId);
+            $affectedLines = $this->commentManager->delete($commId, $postId);
 
             if ($affectedLines === true) {
 

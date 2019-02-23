@@ -25,7 +25,7 @@ admin_only();
         <tbody>
         <?php
 // On récupère les 5 derniers billets
-while ($data = $posts->fetch()) {
+foreach ($posts as $post) {
     ?>
             <tr>
                 <th scope="row"><?=$data->id;?></th>
@@ -39,8 +39,7 @@ while ($data = $posts->fetch()) {
 
 
         <?php
-} // Fin de la boucle des billets
-$posts->closeCursor();
+}
 ?>
         </tbody>
     </table>

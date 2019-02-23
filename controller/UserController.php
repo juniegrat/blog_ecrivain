@@ -1,11 +1,15 @@
 <?php
-require './models/frontend.php';
+require './lib/autoload.php';
 
 class UserController
 {
 
+    protected $userManager;
+
     public function __construct()
     {
+
+        $this->userManager = new UserManager;
 
     }
 
@@ -23,7 +27,7 @@ class UserController
 
             } else {
 
-                $affectedLines = login($login, $password, $remember);
+                $affectedLines = $this->userManager->login($login, $password, $remember);
 
                 if ($affectedLines === true) {
 
@@ -52,7 +56,7 @@ class UserController
     public function _logout()
     {
 
-        $affectedLines = logout();
+        $affectedLines = $this->userManager->logout();
 
         if ($affectedLines) {
 
@@ -79,7 +83,7 @@ class UserController
 
             } else {
 
-                $affectedLines = changePassword($password, $passwordConfirm);
+                $affectedLines = $this->userManager->changePassword($password, $passwordConfirm);
 
                 if ($affectedLines === false) {
 
@@ -120,7 +124,7 @@ class UserController
 
         } else {
 
-            $affectedLines = resetPassword($id, $token, $password, $passwordConfirm);
+            $affectedLines = $this->userManager->resetPassword($id, $token, $password, $passwordConfirm);
 
             if ($affectedLines === true) {
 
@@ -153,11 +157,13 @@ class UserController
     {
         $mail = $_POST['mail'];
 
-        if (empty($_POST)) {
+        if (!empty($_POST)) {
 
             if (!empty($mail)) {
+
+                $affectedLines = $this->userManager->forget($mail);
+
             }
-            $affectedLines = forget($mail);
 
             if ($affectedLines == true) {
 
@@ -203,7 +209,7 @@ class UserController
 
             } else {
 
-                $affectedLines = register($username, $email, $password, $passwordConfirm);
+                $affectedLines = $this->userManager->register($username, $email, $password, $passwordConfirm);
 
                 if ($affectedLines === true) {
 
@@ -240,7 +246,7 @@ class UserController
 
             } else {
 
-                $affectedLines = confirm($userId, $token);
+                $affectedLines = $this->userManager->confirm($userId, $token);
 
                 if ($affectedLines === true) {
 

@@ -23,13 +23,13 @@ class CommentManager extends Manager
         return $req;
     }
 
-    public function lists(int $id)
+    public function lists(int $idNews)
     {
         $commentsList = [];
 
         $req = $this->db->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
 
-        $req->execute([$id]);
+        $req->execute([$idNews]);
 
         while ($data = $req->fetch()) {
             $commentsList[] = new Comment($data);
@@ -38,23 +38,23 @@ class CommentManager extends Manager
         return $commentsList;
     }
 
-    public function rate(int $id)
+    public function rate(int $idComm)
     {
 
         $req = $this->db->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
 
-        $req->execute([$id]);
+        $req->execute([$idComm]);
 
         return $req;
 
     }
 
-    public function delete(int $id)
+    public function delete(int $idComm)
     {
 
         $req = $this->db->prepare('DELETE FROM comments WHERE id = ?');
 
-        $req->execute([$id]);
+        $req->execute([$idComm]);
 
         return $req;
     }

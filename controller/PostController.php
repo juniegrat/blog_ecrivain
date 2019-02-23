@@ -1,32 +1,35 @@
 <?php
-require './models/frontend.php';
+require './lib/autoload.php';
 
 class PostController
 {
 
+    protected $postManager;
+
     public function __construct()
     {
+        $this->postManager = new PostManager;
 
     }
 
     public function _listPosts()
     {
-        lists();
-
+        $this->postManager->lists();
         require './views/frontend/listPostsView.php';
     }
 
     public function _listPost()
     {
-        list($postId);
-        lists($postId);
+        $postId = $_GET['id'];
+
+        $this->postManager->list($postId);
 
         require './views/frontend/postView.php';
     }
 
     public function _admin()
     {
-       lists();
+        $this->postManager->lists();
 
         require './views/frontend/adminView.php';
     }
@@ -45,7 +48,9 @@ class PostController
 
             } else {
 
-                edit($title, $content, $postId);
+                $post = $this->postManager->list($postId);
+
+                $this->postManager->edit($post);
 
                 $_SESSION['flash']['success'] = "L'article à bien été modifié";
 
@@ -55,8 +60,7 @@ class PostController
 
         }
 
-        list($postId);
-        lists($postId);
+        $this->postManager->list($postId);
 
         require './views/frontend/editView.php';
     }
@@ -72,7 +76,7 @@ class PostController
 
         } else {
 
-            $affectedLines = delete($postId);
+            $affectedLines = $this->postManager->delete($postId);
 
             if ($affectedLines === true) {
 
@@ -98,26 +102,20 @@ class PostController
 
         if (!empty($_POST)) {
 
-            $validation = true;
-
             if (empty($postTitle) || empty($postContent)) {
 
                 $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
 
-                $validation = false;
-            }
-            if ($validation) {
+            } else {
 
-                add($postTitle, $postContent);
+                $this->postManager->add($postTitle, $postContent);
 
                 header('location: index.php?action=admin');
 
                 exit();
 
-            } else {
-
-                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
             }
+
         }
 
         require './views/frontend/addPostView.php';

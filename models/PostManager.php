@@ -35,20 +35,17 @@ class PostManager extends Manager
         return $postsList;
     }
 
-    function list(int $id) {
-
-        $postList = [];
+    function list(int $postId) {
 
         $req = $this->db->prepare('SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS date_creation_fr FROM news WHERE id = ?');
 
-        $req->execute($id);
+        $req->execute($postId);
 
-        while ($data = $req->fetch()) {
-            $postList[] = new Post($data);
-        }
+        $post = new Post($req->fetch());
+
         $req->closeCursor();
 
-        return $postList;
+        return $post;
     }
 
     public function delete(int $postId)
