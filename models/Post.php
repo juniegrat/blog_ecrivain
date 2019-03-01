@@ -2,21 +2,21 @@
 class Post
 {
 
-    protected $errors = [],
-    $_id,
-    $_title,
-    $_content,
-        $_dateCreation;
+    protected $errors = [];
+    protected $id;
+    protected $title;
+    protected $content;
+    protected $dateCreation;
 
     const INVALID_TITLE = 1;
     const INVALID_CONTENT = 2;
 
-    public function __construct(array $data)
+    public function __construct(stdClass $data)
     {
         $this->hydrate($data);
     }
 
-    public function hydrate(array $data)
+    public function hydrate(stdClass $data)
     {
         foreach ($data as $attr => $value) {
             $method = 'set' . ucfirst($attr);
@@ -37,30 +37,26 @@ class Post
     }
 
     /**
-     * Get the value of _id
+     * Get the value of id
      */
     public function errors()
-    {
-        return $this->errors;
+    {return $this->errors;
     }
 
     /**
-     * Get the value of _id
+     * Get the value of id
      */
     public function getId()
-    {
-        return $this->id;
+    {return $this->id;
     }
 
     /**
-     * Set the value of _id
-     *
+     * Set the value of id
      * @return  self
      */
     public function setId($id)
     {
         $this->id = (int) $id;
-
         return $this;
     }
 
@@ -114,7 +110,7 @@ class Post
     }
 
     /**
-     * Get the value of _dateCreation
+     * Get the value of dateCreation
      */
     public function getDateCreation()
     {
@@ -126,7 +122,7 @@ class Post
      *
      * @return  self
      */
-    public function setDateCreation(DATETIME $dateCreation)
+    public function setDateCreation($dateCreation)
     {
         $this->dateCreation = $dateCreation;
 

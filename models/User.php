@@ -2,26 +2,26 @@
 class User
 {
 
-    protected $errors = [],
-    $username,
-    $email,
-    $password,
-    $admin,
-    $rememberToken,
-    $confirmationToken,
-    $confirmedAt,
-    $resetToken,
-        $resetAt;
+    protected $errors = [];
+    protected $username;
+    protected $email;
+    protected $password;
+    protected $admin;
+    protected $rememberToken;
+    protected $confirmationToken;
+    protected $confirmedAt;
+    protected $resetToken;
+    protected $resetAt;
 
     const INVALID_USERNAME = 1;
     const INVALID_EMAIL = 2;
 
-    public function __construct(array $values = [])
+    public function __construct(stdClass $data)
     {
-        $this->hydrate($values);
+        $this->hydrate($data);
     }
 
-    public function hydrate(array $data)
+    public function hydrate(stdClass $data)
     {
         foreach ($data as $attr => $value) {
             $method = 'set' . ucfirst($attr);

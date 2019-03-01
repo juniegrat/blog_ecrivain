@@ -7,11 +7,19 @@ class UserManager extends Manager
     public function __construct()
     {
         parent::__construct();
-        $this->db = $pdo;
+        $this->db = $this->pdo;
 
     }
 
-    public function login(string $login, string $password, bool $remember)
+    public function str_random($length)
+    {
+
+        $alphabet = "01234566789azertyuioopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN";
+
+        return substr(str_shuffle(str_repeat($alphabet, $length)), 0, $length);
+    }
+
+    public function login(string $login, string $password, bool $remember = false)
     {
 
         $req = $this->db->prepare('SELECT * FROM users WHERE username = :username OR email = :username AND confirmed_at IS NOT NULL');
@@ -26,7 +34,7 @@ class UserManager extends Manager
 
             if ($remember) {
 
-                $remember_token = str_random(250);
+                $remember_token = $this->str_random(250);
 
                 $this->db->prepare('UPDATE users SET remember_token = ? WHERE id = ?')->execute([$remember_token, $user->id]);
 
@@ -51,10 +59,6 @@ class UserManager extends Manager
 
         unset($_SESSION['auth']);
 
-        $affectedLines = true;
-
-        return $affectedLines;
-
     }
 
     public function forget(string $email)
@@ -68,11 +72,11 @@ class UserManager extends Manager
 
         if ($user) {
 
-            $reset_token = str_random(60);
+            $reset_token = $this->str_random(60);
 
             $affectedLines = $this->db->prepare('UPDATE users SET reset_token = ?, reset_at = NOW() WHERE id = ?')->execute([$reset_token, $user->id]);
 
-            mail($mail, 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=reset&id={$user->id}&token=$reset_token");
+            mail($email, 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=reset&id={$user->id}&token=$reset_token");
 
         } else {
 
@@ -108,7 +112,7 @@ class UserManager extends Manager
 
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-            $token = str_random(60);
+            $token = $this->str_random(60);
 
             $req->execute([$username, $hashedPassword, $mail, $token]);
 
@@ -182,12 +186,10 @@ class UserManager extends Manager
 
         $hashedpassword = password_hash($password, PASSWORD_BCRYPT);
 
-        $affectedLines = $this->db->prepare('UPDATE users SET password = :password WHERE user_id = :user_id ')->execute([
+        $this->db->prepare('UPDATE users SET password = :password WHERE id = :userId ')->execute([
             "password" => $hashedpassword,
-            "user_id" => $userId,
+            "userId" => $userId,
         ]);
-
-        return $affectedLines;
 
     }
 

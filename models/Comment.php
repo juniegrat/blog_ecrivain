@@ -10,12 +10,12 @@ class Comment
     protected $dateComment;
     protected $ratingComment;
 
-    public function __construct(array $data)
+    public function __construct(stdClass $data)
     {
         $this->hydrate($data);
     }
 
-    public function hydrate(array $data)
+    public function hydrate(stdClass $data)
     {
         foreach ($data as $attr => $value) {
             $method = 'set' . ucfirst($attr);
@@ -145,7 +145,7 @@ class Comment
      *
      * @return  self
      */
-    public function setDateComment(DATETIME $dateComment)
+    public function setDateComment($dateComment)
     {
         $this->dateComment = $dateComment;
 
