@@ -47,7 +47,7 @@ if (session_status() == PHP_SESSION_NONE) {
 
             <?php else: ?>
             <li><a href="index.php?action=register">S'inscrire</a></li>
-            <li><a href="index.php?action=loggin">Se connecter</a></li>
+            <li><a href="index.php?action=login">Se connecter</a></li>
             <?php endif;?>
         </ul>
     </div>
@@ -81,7 +81,7 @@ if (session_status() == PHP_SESSION_NONE) {
     // Example starter JavaScript for disabling form submissions if there are invalid fields
     (function () {
         'use strict';
-
+        forms = document.getElementsByClassName("form");
         window.addEventListener('load', function () {
             // Loop over them and prevent submission
             var validation = Array.prototype.filter.call(forms, function (form) {
