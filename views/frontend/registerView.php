@@ -4,8 +4,6 @@
 
 /* session_start(); */
 
-var_dump($_SESSION);
-
 ?>
 <?php $title = 'Mon blog';
 ?>
@@ -33,7 +31,7 @@ var_dump($_SESSION);
 <?php endif;
 unset($_SESSION['errors']);?>
 
-<form action="index.php?action=newUser" method="POST">
+<form class="form"action="index.php?action=newUser" method="POST">
 
     <div class="form-group">
 
