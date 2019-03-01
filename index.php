@@ -1,109 +1,122 @@
 <?php
 
-require './controller/frontend/frontend.php';
+/* require './controller/frontend/frontend.php'; */
+require './lib/autoload.php';
+require './controller/PostController.php';
+require './controller/CommentController.php';
+require './controller/UserController.php';
+$Userctrl = new UserController;
+$Postctrl = new PostController;
+$Comctrl = new CommentController;
 
-switch ($_GET['action']) {
+session_start();
+if (!empty($_GET['action'])) {
+    switch ($_GET['action']) {
 
-    case "listPosts":
-        _listPosts();
-        break;
+        case "listPosts":
 
-    case "post":
-        if (!empty($_GET['id']) && $_GET['id'] > 0) {
-            _listPost();
-        } else {
-            $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
-        }
-        break;
+            $Postctrl->listPosts();
+            break;
 
-    case "addComment":
-        if (!empty($_GET['id']) && $_GET['id'] > 0) {
-            _addComment();
-        } else {
-            $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
-        }
-        break;
-
-    case "delete":
-        if (!empty($_GET['id']) && $_GET['id'] > 0) {
-            if ($_GET['category'] === 'news') {
-                _deletePost();
+        case "post":
+            if (!empty($_GET['id']) && $_GET['id'] > 0) {
+                $Postctrl->listPost();
             } else {
-                _deleteComment();
+                $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
             }
-        } else {
-            $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
-        }
-        break;
+            break;
 
-    case "admin":
-        _admin();
-        break;
+        case "addComment":
+            if (!empty($_GET['id']) && $_GET['id'] > 0) {
+                $Comctrl->addComment();
+            } else {
+                $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
+            }
+            break;
 
-    case "editPost":
-        _editPost();
-        break;
+        case "delete":
+            if (!empty($_GET['id']) && $_GET['id'] > 0) {
+                if ($_GET['category'] === 'news') {
+                    $Postctrl->deletePost();
+                } else {
+                    $Comctrl->deleteComment();
+                }
+            } else {
+                $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
+            }
+            break;
 
-    case "addPost":
-        _addPost();
-        break;
+        case "admin":
+            $Postctrl->admin();
+            break;
 
-    case "rateComment":
-        _rateComment();
-        break;
+        case "editPost":
+            $Postctrl->editPost();
+            break;
 
-    case "lougout":
-        _lougout();
-        break;
+        case "addPost":
+            $Postctrl->addPost();
+            break;
 
-    case "account":
-        _account();
-        break;
+        case "rateComment":
+            $Comctrl->rateComment();
+            break;
 
-    case "login":
-        _login();
-        break;
+        case "logout":
+            $Userctrl->logout();
+            break;
 
-    case "forget" || "mail":
-        _forget();
-        break;
+        case "account":
+            $Userctrl->account();
+            break;
 
-    case "reset":
-        _reset();
-        break;
+        case "login":
+            $Userctrl->login();
+            break;
 
-    case "resetPassword":
-        if (!empty($_GET['id']) && !empty($_GET['token'])) {
-            _resetPassword();
-        } else {
-            $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
-        }
-        break;
+        case "forget" || "mail":
+            $Userctrl->forget();
+            break;
 
-    case "login":
-        _login();
-        break;
+        case "reset":
+            $Userctrl->reset();
+            break;
 
-    case "register" || "newUser":
-        _register();
-        break;
+        case "resetPassword":
+            if (!empty($_GET['id']) && !empty($_GET['token'])) {
+                $Userctrl->resetPassword();
+            } else {
+                $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
+            }
+            break;
 
-    case "confirm":
-        if (!empty($_GET['id']) && !empty($_GET['token'])) {
-            _confirmUser();
-        } else {
-            $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
-        }
-        break;
+        case "login":
+            $Userctrl->login();
+            break;
 
-    case "error":
-        _error();
-        break;
+        case "register" || "newUser":
+            $Userctrl->register();
+            break;
 
-    default:
-        _listPosts();
-        break;
+        case "confirm":
+            if (!empty($_GET['id']) && !empty($_GET['token'])) {
+                $Userctrl->confirmUser();
+            } else {
+                $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
+            }
+            break;
 
+        case "error":
+            error();
+            break;
+
+        default:
+            $Postctrl->listPosts();
+            break;
+
+    }
+} else {
+    $Postctrl->listPosts();
 }
 
 /* if (!empty($_GET['action'])) {
