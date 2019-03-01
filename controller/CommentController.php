@@ -1,6 +1,5 @@
 <?php
-require './lib/autoload.php';
-
+require './models/CommentManager.php';
 class CommentController
 {
 
@@ -13,11 +12,26 @@ class CommentController
 
     }
 
-    public function _addComment()
+    public function listComment()
+    {
+        $postId = $_GET['id'];
+
+        if (empty($postId)) {
+
+            $_SESSION['flash']['danger'] = "Identifiant commentaire invalide";
+
+        } else {
+
+            $this->commentManager->findAll($postId);
+
+        }
+
+    }
+
+    public function addComment()
     {
         $postId = $_GET['id'];
         $author = $_SESSION['auth']->username;
-        $comment = $_POST['comment'];
 
         if (empty($comment)) {
 
@@ -29,24 +43,20 @@ class CommentController
 
         } else {
 
-            $affectedLines = $this->commentManager->post($postId, $author, $comment);
+            $comment = $_POST['comment'];
 
-            if ($affectedLines === false) {
+            $this->commentManager->add($postId, $author, $comment);
 
-                $_SESSION['flash']['danger'] = "Le commentaire n'a pas pu être posté";
+            /*$_SESSION['flash']['danger'] = "Le commentaire n'a pas pu être posté"; */
 
-            } else {
-
-                $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
-
-            }
+            $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
 
             header('Location: index.php?action=post&id=' . $postId);
 
         }
 
     }
-    public function _rateComment()
+    public function rateComment()
     {
         $commentId = $_GET['commentId'];
         $postId = $_GET['postId'];
@@ -64,24 +74,18 @@ class CommentController
             } else {
             }
 
-            $affectedLines = $this->commentManager->rate($commentId, $postId);
+            $this->commentManager->rate($commentId, $postId);
 
-            if ($affectedLines === true) {
+            $_SESSION['flash']['success'] = "Le commentaire à bien été upvote";
 
-                $_SESSION['flash']['success'] = "Le commentaire à bien été upvote";
-
-            } else {
-
-                $_SESSION['flash']['danger'] = "Il y eu une erreur veuillez réessayer plus tard";
-
-            }
+            /* $_SESSION['flash']['danger'] = "Il y eu une erreur veuillez réessayer plus tard"; */
 
             header('location: index.php?action=post&id=' . $postId);
         }
 
     }
 
-    public function _deleteComment()
+    public function deleteComment()
     {
         $commId = $_GET['id'];
         $postId = $_GET['postId'];
@@ -92,19 +96,14 @@ class CommentController
 
         } else {
 
-            $affectedLines = $this->commentManager->delete($commId, $postId);
+            $this->commentManager->delete($commId, $postId);
 
-            if ($affectedLines === true) {
+            $_SESSION['flash']['success'] = "Le commentaire à bien été supprimé";
 
-                $_SESSION['flash']['success'] = "Le commentaire à bien été supprimé";
+            /* $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard"; */
 
-            } else {
-
-                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
-            }
         }
-        header('location: index.php?action=edit&id=' . $postId);
+        header('location: index.php?action=editPost&id=' . $postId);
 
         exit();
     }
