@@ -6,7 +6,7 @@
 
     function setBdd()
     {
-        $_bdd = new PDO('mysql:dbname=test;host=localhost', 'root', 'root');
+        $_bdd = new PDO('mysql:dbname=test', 'host=localhost', 'root', 'root', []);
         $_bdd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $_bdd->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_OBJ);
 

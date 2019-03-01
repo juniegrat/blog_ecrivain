@@ -1,4 +1,5 @@
 <?php
+require 'Comment.php';
 class CommentManager extends Manager
 {
 
@@ -7,7 +8,7 @@ class CommentManager extends Manager
     public function __construct()
     {
         parent::__construct();
-        $this->db = $pdo;
+        $this->db = $this->pdo;
 
     }
 
@@ -15,19 +16,18 @@ class CommentManager extends Manager
     {
         $req = $this->db->prepare('INSERT INTO comments SET id_news = :id_news , author = :author, comment = :comment, date_comment = NOW()');
 
-        $req->execute(array(
+        $req->execute([
             "id_news" => $idNews,
             "author" => $author,
             "comment" => $comment,
-        ));
-        return $req;
+        ]);
     }
 
-    public function lists(int $idNews)
+    public function findAll(int $idNews)
     {
         $commentsList = [];
 
-        $req = $this->db->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS date_comment_fr FROM comments WHERE id_news = ? ORDER BY date_comment');
+        $req = $this->db->prepare('SELECT id, author, comment, rating_comment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS dateComment FROM comments WHERE id_news = ? ORDER BY date_comment');
 
         $req->execute([$idNews]);
 
@@ -45,8 +45,6 @@ class CommentManager extends Manager
 
         $req->execute([$idComm]);
 
-        return $req;
-
     }
 
     public function delete(int $idComm)
@@ -56,7 +54,6 @@ class CommentManager extends Manager
 
         $req->execute([$idComm]);
 
-        return $req;
     }
 
 }
