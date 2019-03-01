@@ -7,7 +7,7 @@
 
 /* require 'inc/functions.php'; */
 
-if ($_SESSION && $_SESSION['auth']->admin == 1) {
+if (isset($_SESSION) && $_SESSION['auth']->admin == 1) {
     ?>
  <a href="index.php?action=admin" class="btn btn-primary">Administration</a>
 <?php
@@ -16,23 +16,25 @@ if ($_SESSION && $_SESSION['auth']->admin == 1) {
 // On récupère les 5 derniers billets
 
 foreach ($posts as $post) {
-    ?>
+    if ($post instanceof Post) {
+        ?>
 <div class="news">
     <h3>
-        <?=htmlspecialchars($posts->title);?>
-        <em>le <?=$posts->date_creation_fr;?></em>
+        <?=htmlspecialchars($post->getTitle());?>
+        <em>le <?=$post->getDateCreation();?></em>
     </h3>
 
     <p>
     <?=
-    // On affiche le contenu du billet
-    nl2br($posts->content);
-    ?>
+        // On affiche le contenu du billet
+        nl2br($post->getContent());
+        ?>
     <br />
-    <em><a href="index.php?action=post&amp;id=<?=$posts->id?>">Commentaires</a></em>
+    <em><a href="index.php?action=post&amp;id=<?=$post->getId()?>">Commentaires</a></em>
     </p>
 </div>
 <?php
+}
 }
 
 ?>

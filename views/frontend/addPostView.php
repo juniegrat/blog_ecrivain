@@ -4,7 +4,6 @@
 
 /* require 'inc/functions.php'; */
 
-admin_only();
 ?>
 
 <?php $title = 'Mon blog';?>
@@ -33,7 +32,7 @@ $_SESSION['flash']['success'] = "L'article à bien été publié";
 <h2>Ajouter un nouvel article</h2>
 
 <div class="editor">
-<form action="index.php?action=addPost" method="POST">
+<form class="form"action="index.php?action=addPost" method="POST">
 
         <input id="newsTitle" type="text" name="title" placeholder="Entrez un titre" > </div>
 

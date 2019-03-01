@@ -5,7 +5,7 @@
 
 <h1>Mot de pass oublié</h1>
 
-<form action="index.php?action=mail" method="POST">
+<form class="form"action="index.php?action=mail" method="POST">
 
 <div class="form-group">
 

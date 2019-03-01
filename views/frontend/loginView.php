@@ -3,10 +3,6 @@
 /* require_once 'inc/functions.php'; */
 /* session_start(); */
 
-var_dump($_SESSION);
-
-reconnect_from_cookie();
-
 if (isset($_SESSION['auth'])) {
 
     header('location: index.php?action=listPosts');
@@ -22,7 +18,7 @@ if (isset($_SESSION['auth'])) {
 
 <h1>Se connecter</h1>
 
-<form action="index.php?action=login" method="POST">
+<form class="form"action="index.php?action=login" method="POST">
 
     <div class="form-group">
 

@@ -17,56 +17,59 @@
 // On récupère l'article
 
 foreach ($posts as $post) {
-    ?>
+    if ($post instanceof Post) {
+        ?>
     <p><a href="index.php?action=listPosts">Retour à la liste des billets</a></p>
 
     <div class="news">
         <h3>
-            <?=$post->title;?>
-            <em>le <?=$post->date_creation_fr;?></em>
+            <?=$post->getTitle();?>
+            <em>le <?=$post->getDateCreation();?></em>
         </h3>
 
         <p>
             <?=
-    // On affiche le contenu du billet
-    nl2br($post->content);
-    ?>
+        // On affiche le contenu du billet
+        nl2br($post->content);
+        ?>
         <br/>
         </p>
     </div>
     <?php
 
-} // Fin de la boucle des billets
-$post->closeCursor();
+    }
+}
 
 // Récupération des commentaires
 
 foreach ($comments as $comment) {
-    ?>
+    if ($comment instanceof Comment) {
+        ?>
     <div class="comment">
         <div class="comment-heading">
 
-            <form action="index.php?action=rateComment&commentId=<?=$comment->id;?>&postId=<?=$_GET['id'];?>" method="POST">
+            <form class="form"action="index.php?action=rateComment&commentId=<?=$comment->getId();?>&postId=<?=$_GET['id'];?>" method="POST">
                     <input type="submit" id=commentButton name="commentButton"  value=&radic;  >
-                    <input type="hidden" id=commentId name="commentId"  value=<?=$comment->id;?>  >
+                    <input type="hidden" id=commentId name="commentId"  value=<?=$comment->getId();?>  >
             </form>
 
                 <strong>
-                    <?=htmlspecialchars($comment->author);?>
+                    <?=htmlspecialchars($comment->getAuthor());?>
                 </strong>
-                le <?=$comment->date_comment_fr;?>
+                le <?=$comment->getDateComment();?>
 
-               <strong>+<?=$comment->rating_comment?> Votes</strong>
+               <strong>+<?=$comment->getRatingComment()?> Votes</strong>
     </div>
-        <?=nl2br(htmlspecialchars($comment->comment));?>
+        <?=nl2br(htmlspecialchars($comment->getComment()));?>
     </div>
     <?php
+}
 }
 ?>
 <?php
 if ($_SESSION && $_SESSION['auth']): ?>
 <h4>Laissez un commentaire</h4>
-<form action="index.php?action=addComment&amp;id=<?=$_GET['id']?>" method="POST">
+<form class="form"action="index.php?action=addComment&amp;id=<?=$_GET['id']?>" method="POST">
     <div class="form-group">
         <textarea class="form-control" name="comment" placeholder="Contenu du commentaire"></textarea>
         <div class="invalid-feedback">

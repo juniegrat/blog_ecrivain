@@ -4,14 +4,13 @@
 
 /* require 'inc/functions.php'; */
 
-admin_only();
 ?>
 
 <?php $title = 'Mon blog';?>
 
 <?php ob_start();?>
 
-    <a href="index.php?action=add" class="btn btn-primary">Ajouter un article</a>
+    <a href="index.php?action=addPost" class="btn btn-primary">Ajouter un article</a>
 
     <table class="table">
         <thead>
@@ -26,19 +25,21 @@ admin_only();
         <?php
 // On récupère les 5 derniers billets
 foreach ($posts as $post) {
-    ?>
+    if ($post instanceof Post) {
+        ?>
             <tr>
-                <th scope="row"><?=$data->id;?></th>
-                <td><?=$data->title;?></td>
-                <td><?=$data->date_creation_fr;?></td>
+                <th scope="row"><?=$post->getId();?></th>
+                <td><?=$post->getTitle();?></td>
+                <td><?=$post->getDateCreation();?></td>
                 <td>
-                    <em><a class="btn btn-primary" href="index.php?action=edit&id=<?php echo $data->id; ?>">Editer</a></em>
-                    <em><a class="btn btn-danger" href="index.php?action=delete&id=<?php echo $data->id; ?>&category=news">Supprimer</a></em>
+                    <em><a class="btn btn-primary" href="index.php?action=editPost&id=<?php echo $post->getId(); ?>">Editer</a></em>
+                    <em><a class="btn btn-danger" href="index.php?action=delete&id=<?php echo $post->getId(); ?>&category=news">Supprimer</a></em>
                 </td>
             </tr>
 
 
         <?php
+}
 }
 ?>
         </tbody>

@@ -5,10 +5,6 @@
 
 /* require 'inc/functions.php'; */
 
-logged_only();
-
-var_dump($_POST);
-
 ?>
 
 <?php $title = 'Mon blog';?>
@@ -18,7 +14,7 @@ var_dump($_POST);
 
 <h1>Bonjour <?=$_SESSION['auth']->username;?></h1>
 
-<form action="index.php?action=account" method="POST">
+<form class="form"action="index.php?action=account" method="POST">
     <div class="form-group">
 
         <input class="form-control" type="password" name="password" placeholder="Changer de mot de passe">

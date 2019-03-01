@@ -4,51 +4,56 @@
 
 /* require 'inc/functions.php'; */
 
-admin_only();
+/* admin_only(); */
 ?>
 
 <?php $title = 'Mon blog';
 ?>
 
-<?php ob_start();?>
+<?php ob_start();
 
+foreach ($posts as $post) {
+    if ($post instanceof Post) {
+        ?>
     <p><a href="index.php?action=admin">Retour à la liste des billets</a></p>
 
     <div class="news">
         <h3>
-            <?=htmlspecialchars($post->title);?>
-            <em>le <?=$post->date_creation_fr;?></em>
+            <?=htmlspecialchars($post->getTitle());?>
+            <em>le <?=$post->getDateCreation();?></em>
         </h3>
 
         <div>
-            <?=nl2br($post->content);?>
+            <?=nl2br($post->getContent());?>
             <br/>
             </div>
     </div>
     <?php
-
+}
+}
 // Récupération des commentaires
 
 foreach ($comments as $comment) {
-    ?>
+    if ($comment instanceof Comment) {
+        ?>
     <div class="comment">
             <p>
                     <a
-                    href="index.php?action=delete&id=<?=$comment->id;?>&postId=<?=$_GET['id']?>&category=comments">&times;
+                    href="index.php?action=delete&id=<?=$comment->getId();?>&postId=<?=$_GET['id']?>&category=comments">&times;
                     </a>
         <strong>
-            <?=htmlspecialchars($comment->author);?>
+            <?=htmlspecialchars($comment->getAuthor());?>
         </strong>
-        le <?=$comment->date_comment_fr;?>
+        le <?=$comment->getDateComment();?>
     </p>
-    <?=nl2br(htmlspecialchars($comment->comment));?>
+    <?=nl2br(htmlspecialchars($comment->getComment()));?>
     </div>
     <?php
-} // Fin de la boucle des commentaires
-$comments->closeCursor();
+}
+}
 ?>
 
-<form action="index.php?action=editPost&id=<?=$_GET['id'];?>" method="POST">
+<form class="form"action="index.php?action=editPost&id=<?=$_GET['id'];?>" method="POST">
 
     <div class="editor">
         <input id="newsTitle" type="text" name="title" placeholder="Entrez un titre" >
