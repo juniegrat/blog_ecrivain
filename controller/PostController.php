@@ -1,46 +1,50 @@
 <?php
-require './lib/autoload.php';
-
+require './models/PostManager.php';
+/* require './models/CommentManager.php'; */
 class PostController
 {
 
     protected $postManager;
+    protected $commentManager;
 
     public function __construct()
     {
         $this->postManager = new PostManager;
+        $this->commentManager = new CommentManager;
 
     }
 
-    public function _listPosts()
+    public function listPosts()
     {
-        $this->postManager->lists();
+        $posts = $this->postManager->findAll();
         require './views/frontend/listPostsView.php';
     }
 
-    public function _listPost()
+    public function listPost()
     {
         $postId = $_GET['id'];
 
-        $this->postManager->list($postId);
+        $posts = $this->postManager->find($postId);
+
+        $comments = $this->commentManager->findAll($postId);
 
         require './views/frontend/postView.php';
     }
 
-    public function _admin()
+    public function admin()
     {
-        $this->postManager->lists();
+        $posts = $this->postManager->findAll();
 
         require './views/frontend/adminView.php';
     }
 
-    public function _editPost()
+    public function editPost()
     {
-        $title = $_POST['title'];
-        $content = $_POST['content'];
         $postId = $_GET['id'];
 
         if (!empty($_POST)) {
+            $title = $_POST['title'];
+            $content = $_POST['content'];
 
             if (empty($title) || empty($content) || empty($postId)) {
 
@@ -48,24 +52,23 @@ class PostController
 
             } else {
 
-                $post = $this->postManager->list($postId);
-
-                $this->postManager->edit($post);
+                $this->postManager->edit($title, $content, $postId);
 
                 $_SESSION['flash']['success'] = "L'article à bien été modifié";
 
-                header('location: index.php?action=edit&id=' . $postId);
+                header('location: index.php?action=editPost&id=' . $postId);
 
             }
 
         }
 
-        $this->postManager->list($postId);
+        $posts = $this->postManager->find($postId);
+        $comments = $this->commentManager->findAll($postId);
 
-        require './views/frontend/editView.php';
+        require './views/frontend/editPostView.php';
     }
 
-    public function _deletePost()
+    public function deletePost()
     {
 
         $postId = $_GET['id'];
@@ -76,17 +79,11 @@ class PostController
 
         } else {
 
-            $affectedLines = $this->postManager->delete($postId);
+            $this->postManager->delete($postId);
 
-            if ($affectedLines === true) {
+            $_SESSION['flash']['success'] = "L'article à bien été supprimé";
 
-                $_SESSION['flash']['success'] = "L'article à bien été supprimé";
-
-            } else {
-
-                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
-            }
+            /* $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard"; */
 
             header('location: index.php?action=admin');
 
@@ -95,12 +92,12 @@ class PostController
         }
     }
 
-    public function _addPost()
+    public function addPost()
     {
-        $postTitle = $_POST['title'];
-        $postContent = $_POST['content'];
 
         if (!empty($_POST)) {
+            $postTitle = $_POST['title'];
+            $postContent = $_POST['content'];
 
             if (empty($postTitle) || empty($postContent)) {
 

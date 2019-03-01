@@ -1,6 +1,5 @@
 <?php
-require './lib/autoload.php';
-
+require './models/UserManager.php';
 class UserController
 {
 
@@ -13,13 +12,14 @@ class UserController
 
     }
 
-    public function _login()
+    public function login()
     {
-        $login = $_POST['username'];
-        $password = $_POST['password'];
-        $remember = $_POST['remember'];
 
         if (!empty($_POST)) {
+
+            $login = $_POST['username'];
+            $password = $_POST['password'];
+            isset($_POST['remember']) ? $remember = $_POST['remember'] : $remember = false;
 
             if (empty($login) || empty($password)) {
 
@@ -27,24 +27,19 @@ class UserController
 
             } else {
 
-                $affectedLines = $this->userManager->login($login, $password, $remember);
+                $this->userManager->login($login, $password, $remember);
 
-                if ($affectedLines === true) {
+                $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
 
-                    $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
+                header('location: index.php?action=account');
 
-                    header('location: index.php?action=account');
+                exit();
 
-                    exit();
+                $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
 
-                } elseif ($affectedLines = "invalid") {
+                header('location: index.php?action=login');
 
-                    $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
-
-                    header('location: index.php?action=loggin');
-
-                    exit();
-                }
+                exit();
 
             }
         }
@@ -53,29 +48,27 @@ class UserController
 
     }
 
-    public function _logout()
+    public function logout()
     {
 
-        $affectedLines = $this->userManager->logout();
+        $this->userManager->logout();
 
-        if ($affectedLines) {
+        $_SESSION['flash']['success'] = "Vous êtes maintenant déconnecté";
 
-            $_SESSION['flash']['success'] = "Vous êtes maintenant déconnecté";
+        header('location: index.php?action=login');
 
-            header('location: index.php?action=loggin');
-        } else {
+        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
 
-            $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
-        }
     }
-    public function _account()
+    public function account()
     {
 
-        $password = $_POST['password'];
-        $passwordConfirm = $_POST['password_confirm'];
+        $userId = $_SESSION['auth']->id;
 
         if (!empty($_POST)) {
+
+            $password = $_POST['password'];
+            $passwordConfirm = $_POST['password_confirm'];
 
             if (empty($password) || empty($passwordConfirm)) {
 
@@ -83,9 +76,9 @@ class UserController
 
             } else {
 
-                $affectedLines = $this->userManager->changePassword($password, $passwordConfirm);
+                $this->userManager->changePassword($password, $userId);
 
-                if ($affectedLines === false) {
+                if ($password != $passwordConfirm) {
 
                     $_SESSION['flash']['danger'] = "Les mots de passes ne correspondent pas";
 
@@ -106,13 +99,10 @@ class UserController
 
     }
 
-    public function _reset()
+    public function reset()
     {
 
-        $id = $_POST['id'];
         $token = $_GET['token'];
-        $password = $_POST['password'];
-        $passwordConfirm = $_POST['password_confirm'];
 
         if (empty($id) || empty($token) || empty($password) || empty($passwordConfirm)) {
 
@@ -123,6 +113,9 @@ class UserController
             exit();
 
         } else {
+            $id = $_POST['id'];
+            $password = $_POST['password'];
+            $passwordConfirm = $_POST['password_confirm'];
 
             $affectedLines = $this->userManager->resetPassword($id, $token, $password, $passwordConfirm);
 
@@ -138,7 +131,7 @@ class UserController
 
                 $_SESSION['flash']['danger'] = "Ce token n'est pas valide";
 
-                header('location: index.php?action=loggin');
+                header('location: index.php?action=login');
 
                 exit();
 
@@ -146,18 +139,18 @@ class UserController
 
                 $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
 
-                header('location: index.php?action=loggin');
+                header('location: index.php?action=login');
 
                 exit();
             }
 
         }
     }
-    public function _forget()
+    public function forget()
     {
-        $mail = $_POST['mail'];
 
         if (!empty($_POST)) {
+            $mail = $_POST['mail'];
 
             if (!empty($mail)) {
 
@@ -193,15 +186,15 @@ class UserController
 
     }
 
-    public function _register()
+    public function register()
     {
 
-        $username = $_POST['username'];
-        $email = $_POST['email'];
-        $password = $_POST['password'];
-        $passwordConfirm = $_POST['password_confirm'];
-
         if (!empty($_POST)) {
+
+            $username = $_POST['username'];
+            $email = $_POST['email'];
+            $password = $_POST['password'];
+            $passwordConfirm = $_POST['password_confirm'];
 
             if (empty($username) || empty($email) || empty($password) || empty($passwordConfirm)) {
 
@@ -215,7 +208,7 @@ class UserController
 
                     $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour valider votre compte";
 
-                    header('Location: index.php?action=loggin');
+                    header('Location: index.php?action=login');
 
                     exit();
 
@@ -231,14 +224,14 @@ class UserController
         require './views/frontend/registerView.php';
     }
 
-    public function _confirmUser()
+    public function confirmUser()
     {
 
-        $userId = $_SESSION['auth']->id;
-
-        $token = $_GET['token'];
-
         if (!empty($_POST)) {
+
+            $userId = $_SESSION['auth']->id;
+
+            $token = $_GET['token'];
 
             if (empty($token)) {
 
