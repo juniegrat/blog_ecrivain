@@ -33,11 +33,7 @@ class CommentController
         $postId = $_GET['id'];
         $author = $_SESSION['auth']->username;
 
-        if (empty($comment)) {
-
-            $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
-
-        } elseif (empty($postId)) {
+        if (empty($postId)) {
 
             $_SESSION['flash']['danger'] = "Identifiant commentaire invalide";
 
@@ -45,15 +41,20 @@ class CommentController
 
             $comment = $_POST['comment'];
 
+            if (empty($comment)) {
+
+                $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
+
+            }
+
             $this->commentManager->add($postId, $author, $comment);
 
             /*$_SESSION['flash']['danger'] = "Le commentaire n'a pas pu être posté"; */
 
             $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
 
-            header('Location: index.php?action=post&id=' . $postId);
-
         }
+        header('Location: index.php?action=post&id=' . $postId);
 
     }
     public function rateComment()

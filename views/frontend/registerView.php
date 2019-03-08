@@ -31,7 +31,7 @@
 <?php endif;
 unset($_SESSION['errors']);?>
 
-<form class="form"action="index.php?action=newUser" method="POST">
+<form class="form"action="index.php?action=register" method="POST">
 
     <div class="form-group">
 

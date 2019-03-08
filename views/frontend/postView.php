@@ -29,8 +29,7 @@ foreach ($posts as $post) {
 
         <p>
             <?=
-        // On affiche le contenu du billet
-        nl2br($post->content);
+        nl2br($post->getContent());
         ?>
         <br/>
         </p>
@@ -67,7 +66,7 @@ foreach ($comments as $comment) {
 }
 ?>
 <?php
-if ($_SESSION && $_SESSION['auth']): ?>
+if (isset($_SESSION['auth']) && $_SESSION['auth']): ?>
 <h4>Laissez un commentaire</h4>
 <form class="form"action="index.php?action=addComment&amp;id=<?=$_GET['id']?>" method="POST">
     <div class="form-group">

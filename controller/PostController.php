@@ -1,5 +1,6 @@
 <?php
 require './models/PostManager.php';
+require './models/Post.php';
 /* require './models/CommentManager.php'; */
 class PostController
 {
@@ -24,10 +25,17 @@ class PostController
     {
         $postId = $_GET['id'];
 
-        $posts = $this->postManager->find($postId);
+        try {
+            $posts = $this->postManager->find($postId);
+            /* var_dump($posts->getTitle()); */
+            /* throw new Exception(); */
 
+        } catch (Exception $e) {
+            $_SESSION['flash']['danger'] = "Aucun article ne correspond à cet identifiant";
+            header('location:index.php?action=listPosts');
+            exit();
+        }
         $comments = $this->commentManager->findAll($postId);
-
         require './views/frontend/postView.php';
     }
 
@@ -61,11 +69,14 @@ class PostController
             }
 
         }
-
-        $posts = $this->postManager->find($postId);
-        $comments = $this->commentManager->findAll($postId);
-
-        require './views/frontend/editPostView.php';
+        try {
+            $posts = $this->postManager->find($postId);
+            $comments = $this->commentManager->findAll($postId);
+        } catch (Exception $e) {
+            $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
+        } finally {
+            require './views/frontend/editPostView.php';
+        }
     }
 
     public function deletePost()
