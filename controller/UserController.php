@@ -27,17 +27,20 @@ class UserController
 
             } else {
 
-                $this->userManager->login($login, $password, $remember);
+                try {
+                    $this->userManager->login($login, $password, $remember);
+                } catch (Exception $e) {
+
+                    $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
+
+                    header('location: index.php?action=login');
+
+                    exit();
+                }
 
                 $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
 
                 header('location: index.php?action=account');
-
-                exit();
-
-                $_SESSION['flash']['danger'] = 'Identifiant ou mot de passe incorrect';
-
-                header('location: index.php?action=login');
 
                 exit();
 
@@ -57,7 +60,7 @@ class UserController
 
         header('location: index.php?action=login');
 
-        $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
+/*         $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard"; */
 
     }
     public function account()
@@ -154,31 +157,20 @@ class UserController
 
             if (!empty($mail)) {
 
-                $affectedLines = $this->userManager->forget($mail);
+                try {
+                    $this->userManager->forget($mail);
+                } catch (Exception $e) {
 
-            }
+                    $_SESSION['flash']['danger'] = 'Aucun compte ne correspond à cette adresse mail';
 
-            if ($affectedLines == true) {
+                    require './views/frontend/forgetView.php';
+
+                    exit();
+
+                }
 
                 $_SESSION['flash']['success'] = "Les instructions du rappel de mot de passe vous ont été envoyés par email";
-
-                header('location: index.php?action=forget');
-
-            } elseif ($affectedLines == "unknownEmail") {
-
-                $_SESSION['flash']['danger'] = 'Aucun compte ne correspond à cette adresse mail';
-
-            } elseif ($affectedLines == "invalidEmail") {
-
-                $_SESSION['flash']['danger'] = "L'adresse mail n'est pas valide";
-
-            } else {
-
-                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
             }
-
-            $_SESSION['flash']['danger'] = "Veuillez saisir une adresse email";
 
         }
 
@@ -188,7 +180,6 @@ class UserController
 
     public function register()
     {
-
         if (!empty($_POST)) {
 
             $username = $_POST['username'];
@@ -200,27 +191,28 @@ class UserController
 
                 $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
 
+            } elseif (password_verify($password, $passwordConfirm)) {
+
             } else {
 
-                $affectedLines = $this->userManager->register($username, $email, $password, $passwordConfirm);
-
-                if ($affectedLines === true) {
-
-                    $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour valider votre compte";
-
-                    header('Location: index.php?action=login');
-
-                    exit();
-
-                } else {
-
+                try {
+                    $this->userManager->register($username, $email, $password, $passwordConfirm);
+                } catch (Exception $e) {
+                    $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs correctement";
                     header('Location: index.php?action=register');
-
+                    exit();
                 }
+
+                $_SESSION['flash']['success'] = "Un email de confirmation vous a été envoyé pour valider votre compte";
+
+                header('Location: index.php?action=login');
+
+                exit();
 
             }
 
         }
+
         require './views/frontend/registerView.php';
     }
 

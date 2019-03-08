@@ -7,7 +7,7 @@
 
 /* require 'inc/functions.php'; */
 
-if (isset($_SESSION) && $_SESSION['auth']->admin == 1) {
+if (isset($_SESSION['auth']) && $_SESSION['auth']->admin == 1) {
     ?>
  <a href="index.php?action=admin" class="btn btn-primary">Administration</a>
 <?php

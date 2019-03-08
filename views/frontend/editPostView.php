@@ -44,7 +44,7 @@ foreach ($comments as $comment) {
         <strong>
             <?=htmlspecialchars($comment->getAuthor());?>
         </strong>
-        le <?=$comment->getDateComment();?>
+        le <?=$comment->getDateComment();?> <strong>+<?=$comment->getRatingComment()?> Votes</strong>
     </p>
     <?=nl2br(htmlspecialchars($comment->getComment()));?>
     </div>

@@ -1,6 +1,5 @@
 <?php
 require 'Manager.php';
-require 'Post.php';
 class PostManager extends Manager
 {
 
@@ -59,6 +58,7 @@ class PostManager extends Manager
         $req->closeCursor();
 
         return $post;
+
     }
 
     public function delete(int $postId)
@@ -66,9 +66,8 @@ class PostManager extends Manager
 
         $req = $this->db->prepare('DELETE FROM news WHERE id = ?');
 
-        $affectedLines = $req->execute(array($postId));
+        $req->execute(array($postId));
 
-        return $affectedLines;
     }
 
     public function add(string $title, string $content)
@@ -76,12 +75,11 @@ class PostManager extends Manager
 
         $req = $this->db->prepare('INSERT INTO news SET title = :title, content = :content, date_creation = NOW()');
 
-        $affectedLines = $req->execute(array(
+        $req->execute(array(
             "title" => $title,
             "content" => $content,
         ));
 
-        return $affectedLines;
     }
 
     public function edit(string $title, string $content, int $postId)
@@ -89,13 +87,11 @@ class PostManager extends Manager
 
         $req = $this->db->prepare('UPDATE news SET title = :title, content = :content WHERE id = :postId');
 
-        $affectedLines = $req->execute([
+        $req->execute([
             "title" => $title,
             "content" => $content,
             "postId" => $postId,
         ]);
-
-        return $affectedLines;
 
     }
 

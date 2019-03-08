@@ -74,7 +74,7 @@ if (!empty($_GET['action'])) {
             $Userctrl->login();
             break;
 
-        case "forget" || "mail":
+        case "forget":
             $Userctrl->forget();
             break;
 
@@ -94,7 +94,7 @@ if (!empty($_GET['action'])) {
             $Userctrl->login();
             break;
 
-        case "register" || "newUser":
+        case "register":
             $Userctrl->register();
             break;
 

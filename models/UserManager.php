@@ -28,8 +28,11 @@ class UserManager extends Manager
 
         $user = $req->fetch();
 
-        if (password_verify($password, $user->password)) {
+        if (!password_verify($password, $user->password)) {
 
+            throw new Exception("invalidCredentials");
+
+        } else {
             $_SESSION['auth'] = $user;
 
             if ($remember) {
@@ -42,15 +45,8 @@ class UserManager extends Manager
 
             }
 
-            $affectedLines = true;
-
-        } else {
-
-            $affectedLines = "invalidCredentials";
-
         }
 
-        return $affectedLines;
     }
     public function logout()
     {
@@ -80,14 +76,13 @@ class UserManager extends Manager
 
         } else {
 
-            $affectedLines = false;
+            throw new Exception('unknown');
 
         }
 
-        return $affectedLines;
     }
 
-    public function register(string $username, email $mail, string $password, array $errors)
+    public function register(string $username, string $mail, string $password)
     {
 
         $errors = [];
@@ -97,6 +92,7 @@ class UserManager extends Manager
         $user = $req->fetch();
         if ($user) {
             $errors['username'] = 'Ce pseudo est déjà pris';
+            throw new Exception();
         }
 
         $req = $this->db->prepare('SELECT id FROM users WHERE email = ?');
@@ -104,6 +100,7 @@ class UserManager extends Manager
         $user = $req->fetch();
         if ($user) {
             $errors['email'] = 'Cet email est déjà utilisé pour un autre compte';
+            throw new Exception();
         }
 
         if (empty($errors)) {
@@ -120,17 +117,13 @@ class UserManager extends Manager
 
             mail($mail, 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=confirm&id=$userId&token=$token");
 
-            $affectedLines = true;
-
         } else {
-
             $_SESSION['errors'] = $errors;
+            throw new Exception();
 
-            $affectedLines = false;
         }
 
-        return $affectedLines;
-
+        return $errors;
     }
 
     public function confirm(int $userId, string $token)

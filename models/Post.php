@@ -11,12 +11,12 @@ class Post
     const INVALID_TITLE = 1;
     const INVALID_CONTENT = 2;
 
-    public function __construct(stdClass $data)
+    public function __construct($data)
     {
         $this->hydrate($data);
     }
 
-    public function hydrate(stdClass $data)
+    public function hydrate($data)
     {
         foreach ($data as $attr => $value) {
             $method = 'set' . ucfirst($attr);
