@@ -26,8 +26,8 @@ class PostController
         $postId = $_GET['id'];
 
         try {
-            $posts = $this->postManager->find($postId);
-            /* var_dump($posts->getTitle()); */
+            $post = $this->postManager->find($postId);
+
             /* throw new Exception(); */
 
         } catch (Exception $e) {
@@ -70,7 +70,7 @@ class PostController
 
         }
         try {
-            $posts = $this->postManager->find($postId);
+            $post = $this->postManager->find($postId);
             $comments = $this->commentManager->findAll($postId);
         } catch (Exception $e) {
             $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
@@ -118,7 +118,11 @@ class PostController
 
                 $this->postManager->add($postTitle, $postContent);
 
-                header('location: index.php?action=admin');
+                $id = $this->postManager->latest();
+
+                $_SESSION['flash']['success'] = "Le post à bien été ajouté";
+
+                header('location: index.php?action=editPost&id=' . $id);
 
                 exit();
 

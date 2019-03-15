@@ -40,7 +40,7 @@ class UserController
 
                 $_SESSION['flash']['success'] = "Vous êtes maintenant connecté";
 
-                header('location: index.php?action=account');
+                header('location: index.php?action=listPosts');
 
                 exit();
 
