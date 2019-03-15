@@ -48,6 +48,7 @@ if (session_status() == PHP_SESSION_NONE) {
         <ul class="nav navbar-nav">
             <?php if (isset($_SESSION['auth'])): ?>
             <li><a href="index.php?action=logout">Se déconnecter</a></li>
+            <li><a href="index.php?action=account">Compte</a></li>
 
             <?php else: ?>
             <li><a href="index.php?action=register">S'inscrire</a></li>

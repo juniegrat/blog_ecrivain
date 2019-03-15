@@ -16,9 +16,8 @@
 
 // On récupère l'article
 
-foreach ($posts as $post) {
-    if ($post instanceof Post) {
-        ?>
+if ($post instanceof Post) {
+    ?>
     <p><a href="index.php?action=listPosts">Retour à la liste des billets</a></p>
 
     <div class="news">
@@ -29,14 +28,12 @@ foreach ($posts as $post) {
 
         <p>
             <?=
-        nl2br($post->getContent());
-        ?>
+    nl2br($post->getContent());
+    ?>
         <br/>
         </p>
     </div>
     <?php
-
-    }
 }
 
 // Récupération des commentaires
