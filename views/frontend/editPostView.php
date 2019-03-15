@@ -12,9 +12,8 @@
 
 <?php ob_start();
 
-foreach ($posts as $post) {
-    if ($post instanceof Post) {
-        ?>
+if ($post instanceof Post) {
+    ?>
     <p><a href="index.php?action=admin">Retour à la liste des billets</a></p>
 
     <div class="news">
@@ -29,7 +28,6 @@ foreach ($posts as $post) {
             </div>
     </div>
     <?php
-}
 }
 // Récupération des commentaires
 
