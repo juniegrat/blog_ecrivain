@@ -1,6 +1,6 @@
 <?php
-require 'Manager.php';
-class PostManager extends Manager
+require 'General.php';
+class PostManager extends General
 {
 
     private $db;
@@ -19,7 +19,7 @@ class PostManager extends Manager
         return $this->db->query('SELECT id FROM post')->num_rows;
     }
 
-    public function findAll(int $start = -1, int $limit = -1, bool $order = false)
+    public function findAll(int $start = -1, int $limit = -1, bool $order = true)
     {
         $postsList = [];
 
@@ -53,9 +53,13 @@ class PostManager extends Manager
             "postId" => $postId,
         ]);
 
-        $post[] = new Post($req->fetch());
-
+        $postData = $req->fetch();
         $req->closeCursor();
+        if ($postData !== false) {
+            $post = new Post($postData);
+        } else {
+            throw new Exception();
+        }
 
         return $post;
 

@@ -1,5 +1,5 @@
 <?php
-class UserManager extends Manager
+class UserManager extends General
 {
 
     private $db;
@@ -9,14 +9,6 @@ class UserManager extends Manager
         parent::__construct();
         $this->db = $this->pdo;
 
-    }
-
-    public function str_random($length)
-    {
-
-        $alphabet = "01234566789azertyuioopqsdfghjklmwxcvbnAZERTYUIOPQSDFGHJKLMWXCVBN";
-
-        return substr(str_shuffle(str_repeat($alphabet, $length)), 0, $length);
     }
 
     public function login(string $login, string $password, bool $remember = false)
@@ -163,7 +155,7 @@ class UserManager extends Manager
 
                 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-                $affectedLines = $this->db->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $id]);
+                $affectedLines = $this->db->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $userId]);
 
             } else {
                 $affectedLines = false;

@@ -1,6 +1,6 @@
 <?php
 require 'Comment.php';
-class CommentManager extends Manager
+class CommentManager extends General
 {
 
     private $db;
