@@ -4,11 +4,13 @@ class CommentController
 {
 
     protected $commentManager;
+    protected $general;
 
     public function __construct()
     {
 
         $this->commentManager = new CommentManager;
+        $this->general = new General;
 
     }
 
@@ -30,6 +32,8 @@ class CommentController
 
     public function addComment()
     {
+        $this->general->logged_only();
+
         $postId = $_GET['id'];
         $author = $_SESSION['auth']->username;
 
@@ -59,6 +63,8 @@ class CommentController
     }
     public function rateComment()
     {
+        $this->general->logged_only();
+
         $commentId = $_GET['commentId'];
         $postId = $_GET['postId'];
 
@@ -88,6 +94,8 @@ class CommentController
 
     public function deleteComment()
     {
+        $this->general->logged_only();
+
         $commId = $_GET['id'];
         $postId = $_GET['postId'];
 

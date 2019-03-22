@@ -5,9 +5,9 @@ require './lib/autoload.php';
 require './controller/PostController.php';
 require './controller/CommentController.php';
 require './controller/UserController.php';
-$Userctrl = new UserController;
-$Postctrl = new PostController;
-$Comctrl = new CommentController;
+$UserController = new UserController;
+$PostController = new PostController;
+$CommentController = new CommentController;
 
 session_start();
 if (!empty($_GET['action'])) {
@@ -15,12 +15,12 @@ if (!empty($_GET['action'])) {
 
         case "listPosts":
 
-            $Postctrl->listPosts();
+            $PostController->listPosts();
             break;
 
         case "post":
             if (!empty($_GET['id']) && $_GET['id'] > 0) {
-                $Postctrl->listPost();
+                $PostController->listPost();
             } else {
                 $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
             }
@@ -28,7 +28,7 @@ if (!empty($_GET['action'])) {
 
         case "addComment":
             if (!empty($_GET['id']) && $_GET['id'] > 0) {
-                $Comctrl->addComment();
+                $CommentController->addComment();
             } else {
                 $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
             }
@@ -37,9 +37,9 @@ if (!empty($_GET['action'])) {
         case "delete":
             if (!empty($_GET['id']) && $_GET['id'] > 0) {
                 if ($_GET['category'] === 'news') {
-                    $Postctrl->deletePost();
+                    $PostController->deletePost();
                 } else {
-                    $Comctrl->deleteComment();
+                    $CommentController->deleteComment();
                 }
             } else {
                 $_SESSION['flash']['danger'] = "Identifiant de billet invalide";
@@ -47,60 +47,56 @@ if (!empty($_GET['action'])) {
             break;
 
         case "admin":
-            $Postctrl->admin();
+            $PostController->admin();
             break;
 
         case "editPost":
-            $Postctrl->editPost();
+            $PostController->editPost();
             break;
 
         case "addPost":
-            $Postctrl->addPost();
+            $PostController->addPost();
             break;
 
         case "rateComment":
-            $Comctrl->rateComment();
+            $CommentController->rateComment();
             break;
 
         case "logout":
-            $Userctrl->logout();
+            $UserController->logout();
             break;
 
         case "account":
-            $Userctrl->account();
+            $UserController->account();
             break;
 
         case "login":
-            $Userctrl->login();
+            $UserController->login();
             break;
 
         case "forget":
-            $Userctrl->forget();
+            $UserController->forget();
             break;
 
         case "reset":
-            $Userctrl->reset();
+            $UserController->reset();
             break;
 
         case "resetPassword":
             if (!empty($_GET['id']) && !empty($_GET['token'])) {
-                $Userctrl->resetPassword();
+                $UserController->resetPassword();
             } else {
                 $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
             }
             break;
 
-        case "login":
-            $Userctrl->login();
-            break;
-
         case "register":
-            $Userctrl->register();
+            $UserController->register();
             break;
 
         case "confirm":
             if (!empty($_GET['id']) && !empty($_GET['token'])) {
-                $Userctrl->confirmUser();
+                $UserController->confirmUser();
             } else {
                 $_SESSION['flash']['danger'] = "Token ou identifiant invalide";
             }
@@ -111,12 +107,12 @@ if (!empty($_GET['action'])) {
             break;
 
         default:
-            $Postctrl->listPosts();
+            $PostController->listPosts();
             break;
 
     }
 } else {
-    $Postctrl->listPosts();
+    $PostController->listPosts();
 }
 
 /* if (!empty($_GET['action'])) {
