@@ -4,12 +4,13 @@ class UserController
 {
 
     protected $userManager;
+    protected $general;
 
     public function __construct()
     {
 
         $this->userManager = new UserManager;
-
+        $this->general = new General;
     }
 
     public function login()
@@ -53,6 +54,7 @@ class UserController
 
     public function logout()
     {
+        $this->general->logged_only();
 
         $this->userManager->logout();
 
@@ -65,6 +67,7 @@ class UserController
     }
     public function account()
     {
+        $this->general->logged_only();
 
         $userId = $_SESSION['auth']->id;
 
@@ -104,6 +107,7 @@ class UserController
 
     public function reset()
     {
+        $this->general->logged_only();
 
         $token = $_GET['token'];
 

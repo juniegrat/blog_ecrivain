@@ -11,14 +11,6 @@ class PostManager extends General
         $this->db = $this->pdo;
     }
 
-    /**
-     * @see PostManager::count()
-     */
-    public function count()
-    {
-        return $this->db->query('SELECT id FROM post')->num_rows;
-    }
-
     public function findAll(int $start = -1, int $limit = -1, bool $order = true)
     {
         $postsList = [];
@@ -53,9 +45,10 @@ class PostManager extends General
             "postId" => $postId,
         ]);
 
+        var_dump($postData);
         $postData = $req->fetch();
         $req->closeCursor();
-        if ($postData !== false) {
+        if ($postData == false) {
             $post = new Post($postData);
         } else {
             throw new Exception();

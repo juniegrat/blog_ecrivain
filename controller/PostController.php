@@ -7,11 +7,13 @@ class PostController
 
     protected $postManager;
     protected $commentManager;
+    protected $general;
 
     public function __construct()
     {
         $this->postManager = new PostManager;
         $this->commentManager = new CommentManager;
+        $this->general = new General;
 
     }
 
@@ -41,6 +43,8 @@ class PostController
 
     public function admin()
     {
+        $this->general->admin_only();
+
         $posts = $this->postManager->findAll();
 
         require './views/frontend/adminView.php';
@@ -48,6 +52,8 @@ class PostController
 
     public function editPost()
     {
+        $this->general->admin_only();
+
         $postId = $_GET['id'];
 
         if (!empty($_POST)) {
@@ -81,6 +87,7 @@ class PostController
 
     public function deletePost()
     {
+        $this->general->admin_only();
 
         $postId = $_GET['id'];
 
@@ -105,6 +112,7 @@ class PostController
 
     public function addPost()
     {
+        $this->general->admin_only();
 
         if (!empty($_POST)) {
             $postTitle = $_POST['title'];
