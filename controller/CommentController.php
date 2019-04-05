@@ -14,7 +14,7 @@ class CommentController
 
     }
 
-    public function listComment()
+    public function listComment(bool $admin = false)
     {
         $postId = $_GET['id'];
 
@@ -24,7 +24,7 @@ class CommentController
 
         } else {
 
-            $this->commentManager->findAll($postId);
+            $this->commentManager->findAll($postId, $admin);
 
         }
 
@@ -51,7 +51,15 @@ class CommentController
 
             }
 
-            $this->commentManager->add($postId, $author, $comment);
+            try {
+
+                $this->commentManager->add($postId, $author, $comment);
+
+            } catch (Exception $e) {
+
+                $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
+
+            }
 
             /*$_SESSION['flash']['danger'] = "Le commentaire n'a pas pu être posté"; */
 
@@ -83,7 +91,7 @@ class CommentController
 
             $this->commentManager->rate($commentId, $postId);
 
-            $_SESSION['flash']['success'] = "Le commentaire à bien été upvote";
+            $_SESSION['flash']['success'] = "Le commentaire à bien été signalé";
 
             /* $_SESSION['flash']['danger'] = "Il y eu une erreur veuillez réessayer plus tard"; */
 
