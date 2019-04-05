@@ -2,6 +2,7 @@
 function autoload($classname)
 {
     if (file_exists($file = __DIR__ . '/' . $classname . '.php')) {
+        var_dump($file);
         require $file;
     }
 }

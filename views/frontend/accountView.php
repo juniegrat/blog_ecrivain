@@ -14,7 +14,7 @@
 
 <h1>Bonjour <?=$_SESSION['auth']->username;?></h1>
 
-<form class="form"action="index.php?action=account" method="POST">
+<form class="form w-50" action="index.php?action=account" method="POST">
     <div class="form-group">
 
         <input class="form-control" type="password" name="password" placeholder="Changer de mot de passe">

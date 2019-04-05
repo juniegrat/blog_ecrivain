@@ -51,7 +51,7 @@ if (!empty($_GET['action'])) {
             break;
 
         case "editPost":
-            $PostController->editPost();
+            $PostController->editPost(true);
             break;
 
         case "addPost":
