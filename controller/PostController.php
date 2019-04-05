@@ -19,11 +19,14 @@ class PostController
 
     public function listPosts()
     {
-        $posts = $this->postManager->findAll();
+        $page = (!empty($_GET['page']) ? $_GET['page'] : 1);
+        $limit = 2;
+        $posts = $this->postManager->findAll($page, $limit);
+        $postsCount = $this->postManager->count();
         require './views/frontend/listPostsView.php';
     }
 
-    public function listPost()
+    public function listPost(bool $admin = false)
     {
         $postId = $_GET['id'];
 
@@ -37,7 +40,7 @@ class PostController
             header('location:index.php?action=listPosts');
             exit();
         }
-        $comments = $this->commentManager->findAll($postId);
+        $comments = $this->commentManager->findAll($postId, $admin);
         require './views/frontend/postView.php';
     }
 
@@ -50,7 +53,7 @@ class PostController
         require './views/frontend/adminView.php';
     }
 
-    public function editPost()
+    public function editPost(bool $admin = false)
     {
         $this->general->admin_only();
 
@@ -77,7 +80,8 @@ class PostController
         }
         try {
             $post = $this->postManager->find($postId);
-            $comments = $this->commentManager->findAll($postId);
+            $comments = $this->commentManager->findAll($postId, $admin);
+
         } catch (Exception $e) {
             $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
         } finally {
