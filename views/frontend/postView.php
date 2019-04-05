@@ -41,12 +41,12 @@ if ($post instanceof Post) {
 foreach ($comments as $comment) {
     if ($comment instanceof Comment) {
         ?>
-    <div class="comment">
+    <div class="comment my-5 card p-4 h-100">
         <div class="comment-heading">
 
             <form class="form"action="index.php?action=rateComment&commentId=<?=$comment->getId();?>&postId=<?=$_GET['id'];?>" method="POST">
-                    <input type="submit" id=commentButton name="commentButton"  value=&radic;  >
-                    <input type="hidden" id=commentId name="commentId"  value=<?=$comment->getId();?>  >
+                    <input class="form-control btn-sm p-0" type="submit" id=commentButton name="commentButton"  value="signaler">
+                    <input class="form-control" type="hidden" id=commentId name="commentId"  value=<?=$comment->getId();?>  >
             </form>
 
                 <strong>
@@ -54,7 +54,7 @@ foreach ($comments as $comment) {
                 </strong>
                 le <?=$comment->getDateComment();?>
 
-               <strong>+<?=$comment->getRatingComment()?> Votes</strong>
+               <strong><?=$comment->getRatingComment()?> 👎</strong>
     </div>
         <?=nl2br(htmlspecialchars($comment->getComment()));?>
     </div>
@@ -67,7 +67,7 @@ if (isset($_SESSION['auth']) && $_SESSION['auth']): ?>
 <h4>Laissez un commentaire</h4>
 <form class="form"action="index.php?action=addComment&amp;id=<?=$_GET['id']?>" method="POST">
     <div class="form-group">
-        <textarea class="form-control" name="comment" placeholder="Contenu du commentaire"></textarea>
+        <textarea class="form-control w-50" name="comment" placeholder="Contenu du commentaire"></textarea>
         <div class="invalid-feedback">
             Veuillez ajouter un nom valide.
         </div>
