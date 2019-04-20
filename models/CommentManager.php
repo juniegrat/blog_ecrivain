@@ -14,6 +14,10 @@ class CommentManager extends General
 
     public function add(int $idNews, string $author, string $comment)
     {
+        if (!$comment) {
+            throw new Exception();
+        }
+
         $req = $this->db->prepare('INSERT INTO comments SET id_news = :id_news, author = :author, comment = :comment, date_comment = NOW()');
 
         $req->execute([

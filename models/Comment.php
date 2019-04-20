@@ -102,7 +102,7 @@ class Comment
     public function setAuthor($author)
     {
         if (!is_string($author) || empty($author)) {
-            throw new Exception(self::INVALID_AUTHOR);
+            /*  */
             /* $this->errors[] = self::INVALID_AUTHOR; */
         } else {
             $this->author = $author;
@@ -128,7 +128,7 @@ class Comment
     {
 
         if (!is_string($comment) || empty($comment)) {
-            throw new Exception(self::INVALID_COMMENT);
+            /* throw new Exception(self::INVALID_COMMENT); */
             /* $this->errors[] = self::INVALID_COMMENT; */
         } else {
             $this->comment = $comment;

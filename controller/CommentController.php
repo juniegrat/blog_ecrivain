@@ -45,11 +45,13 @@ class CommentController
 
             $comment = $_POST['comment'];
 
-            if (empty($comment)) {
+            /*  if (empty($comment)) {
 
-                $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
+            $_SESSION['flash']['danger'] = "Veuillez entrer un commentaire";
 
-            }
+            }else{
+
+            } */
 
             try {
 
@@ -59,11 +61,14 @@ class CommentController
 
                 $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
 
+                header('Location: index.php?action=post&id=' . $postId);
+
+                exit();
+
             }
 
-            /*$_SESSION['flash']['danger'] = "Le commentaire n'a pas pu être posté"; */
-
             $_SESSION['flash']['success'] = "Le commentaire à bien été posté";
+            /*$_SESSION['flash']['danger'] = "Le commentaire n'a pas pu être posté"; */
 
         }
         header('Location: index.php?action=post&id=' . $postId);
