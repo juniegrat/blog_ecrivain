@@ -20,6 +20,8 @@ class PostManager extends General
 
         $count = $req->fetch();
 
+        $req->closeCursor();
+
         return $count->countPost;
 
     }

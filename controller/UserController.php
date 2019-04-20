@@ -107,9 +107,13 @@ class UserController
 
     public function reset()
     {
-        $this->general->logged_only();
+        /* $this->general->logged_only(); */
 
         $token = $_GET['token'];
+
+        $id = $_POST['id'];
+        $password = $_POST['password'];
+        $passwordConfirm = $_POST['password_confirm'];
 
         if (empty($id) || empty($token) || empty($password) || empty($passwordConfirm)) {
 
@@ -120,9 +124,6 @@ class UserController
             exit();
 
         } else {
-            $id = $_POST['id'];
-            $password = $_POST['password'];
-            $passwordConfirm = $_POST['password_confirm'];
 
             $affectedLines = $this->userManager->resetPassword($id, $token, $password, $passwordConfirm);
 
@@ -152,6 +153,9 @@ class UserController
             }
 
         }
+
+        require './views/frontend/resetView.php';
+
     }
     public function forget()
     {
