@@ -16,28 +16,28 @@ if ($post instanceof Post) {
     ?>
     <p><a href="index.php?action=admin">Retour à la liste des billets</a></p>
 
-    <div class="news">
+    <div class="news w-50 mx-auto">
         <h3>
             <?=htmlspecialchars($post->getTitle());?>
             <em>le <?=$post->getDateCreation();?></em>
         </h3>
 
-        <div>
-            <?=nl2br($post->getContent());?>
+        <div class="content-display">
+            <?=$post->getContent();?>
             <br/>
         </div>
     </div>
     <form class="form"action="index.php?action=editPost&id=<?=$_GET['id'];?>" method="POST">
 
         <div class="editor">
-            <input id="newsTitle" type="text" name="title" placeholder="<?=$post->getTitle()?>" >
+            <input id="newsTitle" type="text" name="title" value="<?=$post->getTitle()?>" >
 
             <div class="invalid-feedback">
                 Veuillez ajouter un nom valide.
             </div>
         </div>
 
-        <textarea class="mytextarea-body" name="content" placeholder="<?=nl2br($post->getContent());?>" > </textarea>
+        <textarea class="mytextarea-body" name="content" ><?=$post->getContent();?></textarea>
 
         <div class="invalid-feedback">
             Veuillez ajouter un nom valide.
@@ -53,7 +53,7 @@ if ($post instanceof Post) {
 foreach ($comments as $comment) {
     if ($comment instanceof Comment) {
         ?>
-    <div class="comment">
+    <div class="comment mx-auto">
             <p>
                     <a data-toggle="modal" data-target="#deleteModal">&times;</a>
         <strong>
@@ -77,7 +77,7 @@ foreach ($comments as $comment) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
-            <a type="button" class="btn btn-danger text-white" href="index.php?action=delete&id=<?=$comment->getId();?>&postId=<?=$_GET['id']?>&category=comments" > Oui</a>
+            <a class="btn btn-danger text-white" href="index.php?action=delete&id=<?=$comment->getId();?>&postId=<?=$_GET['id']?>&category=comments" > Oui</a>
           </div>
         </div>
       </div>

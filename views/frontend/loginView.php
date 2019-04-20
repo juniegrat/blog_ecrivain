@@ -18,7 +18,7 @@ if (isset($_SESSION['auth'])) {
 
 <h1>Se connecter</h1>
 
-<form class="form"action="index.php?action=login" method="POST">
+<form class="form w-50"action="index.php?action=login" method="POST">
 
     <div class="form-group">
 
