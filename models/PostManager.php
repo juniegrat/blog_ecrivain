@@ -45,10 +45,9 @@ class PostManager extends General
             "postId" => $postId,
         ]);
 
-        var_dump($postData);
         $postData = $req->fetch();
         $req->closeCursor();
-        if ($postData == false) {
+        if ($postData != false) {
             $post = new Post($postData);
         } else {
             throw new Exception();

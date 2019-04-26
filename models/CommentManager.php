@@ -23,11 +23,18 @@ class CommentManager extends General
         ]);
     }
 
-    public function findAll(int $idNews)
+    public function findAll(int $idNews, bool $admin = false)
     {
         $commentsList = [];
 
-        $req = $this->db->prepare('SELECT id, id_news AS idNews, author, comment, rating_comment AS ratingComment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS dateComment FROM comments WHERE id_news = ? ORDER BY ratingComment');
+        $sql = 'SELECT id, id_news AS idNews, author, comment, rating_comment AS ratingComment, DATE_FORMAT(date_comment, \'%d/%m/%Y à %Hh%imin%ss\') AS dateComment FROM comments WHERE id_news = ?';
+
+        if ($admin == true) {
+            $sql .= "ORDER BY ratingComment DESC";
+        } else {
+            $sql .= "ORDER BY dateComment DESC";
+        }
+        $req = $this->db->prepare($sql);
 
         $req->execute([$idNews]);
 
