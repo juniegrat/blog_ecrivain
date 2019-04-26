@@ -19,7 +19,10 @@ class PostController
 
     public function listPosts()
     {
-        $posts = $this->postManager->findAll();
+        $page = (!empty($_GET['page']) ? $_GET['page'] : 1);
+        $limit = 2;
+        $posts = $this->postManager->findAll($page, $limit);
+        $postsCount = $this->postManager->count();
         require './views/frontend/listPostsView.php';
     }
 

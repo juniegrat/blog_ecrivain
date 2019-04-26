@@ -7,7 +7,9 @@
 
 /* require 'inc/functions.php'; */
 
+
 // On récupère les 5 derniers billets
+
 
 foreach ($posts as $post) {
     if ($post instanceof Post) {
@@ -30,8 +32,16 @@ foreach ($posts as $post) {
 <?php
 }
 }
-
 ?>
+<div class="btn-group col-6 mx-auto d-flex justify-content-around">
+    <?php if ($page > 1): ?>
+    <a href="?page=<?php echo $page - 1; ?>" class="btn next btn-primary mr-5">Précédent</a>
+    <?php endif;
+if ($page < $limit): ?>
+    <a href="?page=<?php echo $page + 1; ?>" class="btn prev btn-primary ml-5">Suivant</a>
+    <?php endif;?>
+</div>
+
 <?php $content = ob_get_clean();?>
 
 <?php require 'template.php';?>

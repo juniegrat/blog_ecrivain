@@ -11,9 +11,28 @@ class PostManager extends General
         $this->db = $this->pdo;
     }
 
-    public function findAll(int $start = -1, int $limit = -1, bool $order = true)
+    public function count()
+    {
+
+        $req = $this->db->prepare('SELECT COUNT(id) as countPost FROM news');
+
+        $req->execute([]);
+
+        $count = $req->fetch();
+
+        $req->closeCursor();
+
+        return $count->countPost;
+
+    }
+
+    public function findAll(int $page = 1, int $start = -1, int $limit = -1, bool $order = true)
     {
         $postsList = [];
+
+        $limit = 5;
+
+        $start = ($page - 1) * $limit;
 
         $sql = 'SELECT id, title, content, DATE_FORMAT(date_creation, \'%d/%m/%Y à %Hh%imin%ss\') AS dateCreation FROM news ORDER BY date_creation';
 
