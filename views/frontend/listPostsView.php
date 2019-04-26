@@ -7,6 +7,10 @@
 
 /* require 'inc/functions.php'; */
 
+
+// On récupère les 5 derniers billets
+
+
 foreach ($posts as $post) {
     if ($post instanceof Post) {
         $postText = nl2br($post->getContent());

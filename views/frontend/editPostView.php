@@ -30,14 +30,18 @@ if ($post instanceof Post) {
     <form class="form"action="index.php?action=editPost&id=<?=$_GET['id'];?>" method="POST">
 
         <div class="editor">
+
             <input id="newsTitle" type="text" name="title" value="<?=$post->getTitle()?>" >
+
 
             <div class="invalid-feedback">
                 Veuillez ajouter un nom valide.
             </div>
         </div>
 
+
         <textarea class="mytextarea-body" name="content" ><?=$post->getContent();?></textarea>
+
 
         <div class="invalid-feedback">
             Veuillez ajouter un nom valide.
@@ -77,7 +81,9 @@ foreach ($comments as $comment) {
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Non</button>
+
             <a class="btn btn-danger text-white" href="index.php?action=delete&id=<?=$comment->getId();?>&postId=<?=$_GET['id']?>&category=comments" > Oui</a>
+
           </div>
         </div>
       </div>
