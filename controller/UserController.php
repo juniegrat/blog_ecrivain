@@ -25,7 +25,6 @@ class UserController
             if (empty($login) || empty($password)) {
 
                 $_SESSION['flash']['success'] = "Veuillez remplir tout les champs";
-
             } else {
 
                 try {
@@ -44,12 +43,10 @@ class UserController
                 header('location: index.php?action=listPosts');
 
                 exit();
-
             }
         }
 
         require './views/frontend/loginView.php';
-
     }
 
     public function logout()
@@ -62,8 +59,7 @@ class UserController
 
         header('location: index.php?action=login');
 
-/*         $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard"; */
-
+        /*         $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard"; */
     }
     public function account()
     {
@@ -79,7 +75,6 @@ class UserController
             if (empty($password) || empty($passwordConfirm)) {
 
                 $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
-
             } else {
 
                 $this->userManager->changePassword($password, $userId);
@@ -87,7 +82,6 @@ class UserController
                 if ($password != $passwordConfirm) {
 
                     $_SESSION['flash']['danger'] = "Les mots de passes ne correspondent pas";
-
                 } else {
 
                     $_SESSION['flash']['success'] = "Votre mot de passe à bien été mis à jour";
@@ -96,66 +90,47 @@ class UserController
 
                     exit();
                 }
-
             }
-
         }
 
         require './views/frontend/accountView.php';
-
     }
 
     public function reset()
     {
         /* $this->general->logged_only(); */
 
-        $token = $_GET['token'];
-
-        $id = $_POST['id'];
-        $password = $_POST['password'];
-        $passwordConfirm = $_POST['password_confirm'];
-
-        if (empty($id) || empty($token) || empty($password) || empty($passwordConfirm)) {
+        if (empty($_POST['password']) || empty($_POST['password_confirm'])) {
 
             $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
 
-            header('location: index.php?action=reset&id=' . $id . '&token=' . $token);
-
-            exit();
-
+            /* header('location: index.php?action=reset&id=' . $_GET['id'] . '&token=' . $_GET['token']); */
         } else {
+            $token = $_GET['token'];
+            $id = $_GET['id'];
+            $password = $_POST['password'];
+            $passwordConfirm = $_POST['password_confirm'];
 
-            $affectedLines = $this->userManager->resetPassword($id, $token, $password, $passwordConfirm);
+            try {
 
-            if ($affectedLines === true) {
-
-                $_SESSION['flash']['success'] = "Votre mot de passe à bien été modifié";
-
-                header('location: index.php?action=account');
-
-                exit();
-
-            } elseif ($affectedLines === "invalidToken") {
+                $this->userManager->resetPassword($id, $token, $password, $passwordConfirm);
+            } catch (Exception $e) {
 
                 $_SESSION['flash']['danger'] = "Ce token n'est pas valide";
 
                 header('location: index.php?action=login');
 
                 exit();
-
-            } else {
-
-                $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
-
-                header('location: index.php?action=login');
-
-                exit();
             }
 
+            $_SESSION['flash']['success'] = "Votre mot de passe à bien été modifié";
+
+            header('location: index.php?action=account');
+
+            exit();
         }
 
         require './views/frontend/resetView.php';
-
     }
     public function forget()
     {
@@ -174,16 +149,13 @@ class UserController
                     require './views/frontend/forgetView.php';
 
                     exit();
-
                 }
 
                 $_SESSION['flash']['success'] = "Les instructions du rappel de mot de passe vous ont été envoyés par email";
             }
-
         }
 
         require './views/frontend/forgetView.php';
-
     }
 
     public function register()
@@ -198,10 +170,7 @@ class UserController
             if (empty($username) || empty($email) || empty($password) || empty($passwordConfirm)) {
 
                 $_SESSION['flash']['danger'] = "Veuillez remplir tout les champs";
-
-            } elseif (password_verify($password, $passwordConfirm)) {
-
-            } else {
+            } elseif (password_verify($password, $passwordConfirm)) { } else {
 
                 try {
                     $this->userManager->register($username, $email, $password, $passwordConfirm);
@@ -216,9 +185,7 @@ class UserController
                 header('Location: index.php?action=login');
 
                 exit();
-
             }
-
         }
 
         require './views/frontend/registerView.php';
@@ -236,7 +203,6 @@ class UserController
             if (empty($token)) {
 
                 $_SESSION['flash']['danger'] = "Veuillez entrer un identifiant valide";
-
             } else {
 
                 $affectedLines = $this->userManager->confirm($userId, $token);
@@ -246,7 +212,6 @@ class UserController
                     $_SESSION['flash']['success'] = "Votre compte à bien été validé";
 
                     header('location: index.php?action=account');
-
                 } elseif ($affectedLines === "invalidToken") {
 
                     $_SESSION['flash']['danger'] = "Ce token n'est plus valide";
@@ -257,11 +222,8 @@ class UserController
                     $_SESSION['flash']['danger'] = "Il y a eu une erreur veuillez réessayer plus tard";
 
                     header('location: index.php?action=register');
-
                 }
-
             }
-
         }
     }
 }

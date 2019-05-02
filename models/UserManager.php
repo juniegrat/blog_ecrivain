@@ -8,7 +8,6 @@ class UserManager extends General
     {
         parent::__construct();
         $this->db = $this->pdo;
-
     }
 
     public function login(string $login, string $password, bool $remember = false)
@@ -23,7 +22,6 @@ class UserManager extends General
         if (!password_verify($password, $user->password)) {
 
             throw new Exception("invalidCredentials");
-
         } else {
             $_SESSION['auth'] = $user;
 
@@ -34,11 +32,8 @@ class UserManager extends General
                 $this->db->prepare('UPDATE users SET remember_token = ? WHERE id = ?')->execute([$remember_token, $user->id]);
 
                 setcookie('remember', $user->id . '==' . $remember_token . sha1($user->id . 'boi'), time() + 60 * 60 * 24 * 7);
-
             }
-
         }
-
     }
     public function logout()
     {
@@ -46,7 +41,6 @@ class UserManager extends General
         setcookie('remember', null, -1);
 
         unset($_SESSION['auth']);
-
     }
 
     public function forget(string $email)
@@ -65,13 +59,10 @@ class UserManager extends General
             $affectedLines = $this->db->prepare('UPDATE users SET reset_token = ?, reset_at = NOW() WHERE id = ?')->execute([$reset_token, $user->id]);
 
             mail($email, 'Réinitialisation de votre mot de passe', "Afin de réinitialiser votre mot de passe merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=reset&id={$user->id}&token=$reset_token");
-
         } else {
 
             throw new Exception('unknown');
-
         }
-
     }
 
     public function register(string $username, string $mail, string $password)
@@ -108,11 +99,9 @@ class UserManager extends General
             $userId = $this->db->lastInsertId();
 
             mail($mail, 'Confirmation de votre compte', "Afin de valider votre compte merci de cliquer sur ce lien: \n\nhttp://localhost:8888/blog_ecrivain/index.php?action=confirm&id=$userId&token=$token");
-
         } else {
             $_SESSION['errors'] = $errors;
             throw new Exception();
-
         }
 
         return $errors;
@@ -130,11 +119,9 @@ class UserManager extends General
         if ($user && $user->confirmation_token == $token) {
 
             $affectedLines = $req = $this->db->prepare('UPDATE users SET confirmation_token = NULL, confirmed_at = NOW() WHERE id = ?')->execute([$userId]);
-
         } else {
 
             $affectedLines = "invalidToken";
-
         }
 
         return $affectedLines;
@@ -155,14 +142,10 @@ class UserManager extends General
 
                 $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-                $affectedLines = $this->db->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $userId]);
-
+                $this->db->prepare('UPDATE users SET password = ?, reset_at = NULL, reset_token = NULL WHERE id = ?')->execute([$hashedPassword, $userId]);
             } else {
-                $affectedLines = false;
+                throw new Exception();
             }
-
-            return $affectedLines;
-
         }
     }
 
@@ -175,7 +158,5 @@ class UserManager extends General
             "password" => $hashedpassword,
             "userId" => $userId,
         ]);
-
     }
-
 }

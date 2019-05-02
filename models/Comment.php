@@ -61,7 +61,7 @@ class Comment
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = (int)$id;
 
         return $this;
     }
@@ -81,7 +81,7 @@ class Comment
      */
     public function setIdNews($idNews)
     {
-        $this->idNews = (int) $idNews;
+        $this->idNews = (int)$idNews;
 
         return $this;
     }
@@ -103,8 +103,7 @@ class Comment
     {
         if (!is_string($author) || empty($author)) {
             /*  */
-            /* $this->errors[] = self::INVALID_AUTHOR; */
-        } else {
+            /* $this->errors[] = self::INVALID_AUTHOR; */ } else {
             $this->author = $author;
         }
 
@@ -129,8 +128,7 @@ class Comment
 
         if (!is_string($comment) || empty($comment)) {
             /* throw new Exception(self::INVALID_COMMENT); */
-            /* $this->errors[] = self::INVALID_COMMENT; */
-        } else {
+            /* $this->errors[] = self::INVALID_COMMENT; */ } else {
             $this->comment = $comment;
         }
 
@@ -172,7 +170,7 @@ class Comment
      */
     public function setRatingComment($ratingComment)
     {
-        $this->ratingComment = (int) $ratingComment;
+        $this->ratingComment = (int)$ratingComment;
 
         return $this;
     }

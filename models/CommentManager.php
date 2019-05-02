@@ -9,7 +9,6 @@ class CommentManager extends General
     {
         parent::__construct();
         $this->db = $this->pdo;
-
     }
 
     public function add(int $idNews, string $author, string $comment)
@@ -55,7 +54,6 @@ class CommentManager extends General
         $req = $this->db->prepare('UPDATE comments SET rating_comment = rating_comment+1 WHERE id = ?');
 
         $req->execute([$idComm]);
-
     }
 
     public function delete(int $idComm)
@@ -64,7 +62,5 @@ class CommentManager extends General
         $req = $this->db->prepare('DELETE FROM comments WHERE id = ?');
 
         $req->execute([$idComm]);
-
     }
-
 }

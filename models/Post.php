@@ -40,14 +40,16 @@ class Post
      * Get the value of id
      */
     public function errors()
-    {return $this->errors;
+    {
+        return $this->errors;
     }
 
     /**
      * Get the value of id
      */
     public function getId()
-    {return $this->id;
+    {
+        return $this->id;
     }
 
     /**
@@ -56,7 +58,7 @@ class Post
      */
     public function setId($id)
     {
-        $this->id = (int) $id;
+        $this->id = (int)$id;
         return $this;
     }
 
@@ -82,7 +84,6 @@ class Post
         }
 
         return $this;
-
     }
 
     /**

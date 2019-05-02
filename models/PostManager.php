@@ -23,7 +23,6 @@ class PostManager extends General
         $req->closeCursor();
 
         return $count->countPost;
-
     }
 
     public function findAll(int $page = 1, int $start = -1, int $limit = -1, bool $order = true)
@@ -42,7 +41,7 @@ class PostManager extends General
             $sql .= ' ASC ';
         }
         if ($start != -1 || $limit != -1) {
-            $sql .= 'LIMIT ' . (int) $limit . ' OFFSET ' . (int) $start;
+            $sql .= 'LIMIT ' . (int)$limit . ' OFFSET ' . (int)$start;
         }
         $req = $this->db->query($sql);
 
@@ -73,7 +72,6 @@ class PostManager extends General
         }
 
         return $post;
-
     }
 
     public function delete(int $postId)
@@ -82,7 +80,6 @@ class PostManager extends General
         $req = $this->db->prepare('DELETE FROM news WHERE id = ?');
 
         $req->execute(array($postId));
-
     }
 
     public function add(string $title, string $content)
@@ -94,7 +91,6 @@ class PostManager extends General
             "title" => $title,
             "content" => $content,
         ));
-
     }
 
     public function edit(string $title, string $content, int $postId)
@@ -107,7 +103,5 @@ class PostManager extends General
             "content" => $content,
             "postId" => $postId,
         ]);
-
     }
-
 }

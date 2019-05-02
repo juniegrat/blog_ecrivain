@@ -28,7 +28,6 @@ class General extends Manager
     {
 
         echo '<pre>' . print_r($variable, true) . '</pre>';
-
     }
 
     public function logged_only()
@@ -46,7 +45,6 @@ class General extends Manager
 
             exit();
         }
-
     }
 
     public function admin_only()
@@ -79,7 +77,6 @@ class General extends Manager
             if (!isset($db)) {
 
                 global $db;
-
             }
 
             $remember_token = $_COOKIE['remember'];
@@ -109,13 +106,10 @@ class General extends Manager
                     unset($_SESSION['flash']);
 
                     header('location: index.php?action=account');
-
                 } else {
                     setcookie('remember', null, -1);
                 }
-
             }
         }
     }
-
 }
