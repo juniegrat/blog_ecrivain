@@ -109,7 +109,6 @@ if (!empty($_GET['action'])) {
         default:
             $PostController->listPosts();
             break;
-
     }
 } else {
     $PostController->listPosts();
